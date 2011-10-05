@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="product_name">NeTV</string>
+    <string name="app_name">NeTV</string>
+    <string name="rooted_true">Wow! You rooted your device.</string>
+    <string name="rooted_false">Why aren\'t you rooting it?</string>    
+    
+    <string name="factory_test_mode">Factory Test mode</string>
+    <string name="waiting_for_wifi">Waiting for WiFi to connect...</string>
+    <string name="connecting_netv_device">Connecting to NeTV device...</string>
+    <string name="refreshing_wifi_list">Refreshing WiFi list...</string>
+    <string name="sending_data_netv">Sending data to NeTV device...</string>
+    <string name="configuring_netv_network">Configuring NeTV\'s network...</string>
+    <string name="activating_netv_device">Activating your NeTV...</string>
+    <string name="error_no_netv_device">Cannot detect NeTV device. Make sure you have powered on your NeTV and retry.</string>
+    <string name="error_comm_netv_device">Cannot communicate with NeTV device.</string>
+    <string name="select_home_wifi">Select your home WiFi network</string>
+        
+    <string name="config_home_wifi">Configure your home WiFi network</string>
+    <string name="config_chumby_account">Activate NeTV with your Chumby account</string>
+
+    <string name="enter_ssid_hint">Enter network SSID</string>
+    <string name="show_password">Show password</string>
+    
+    <!-- Common Buttons -->
+    <string name="button_yes">Yes</string>
+    <string name="button_no">No</string>
+    <string name="button_exit">Exit</string>
+    <string name="button_no_and_exit">No. Exit now</string>
+    <string name="button_dismiss">Dismiss</string>
+    <string name="button_continue">Continue</string>
+    <string name="button_back">Back</string>
+    <string name="button_next">Next</string>
+    <string name="button_ok">OK</string>
+    <string name="button_activate">Activate</string>
+    <string name="button_not_now">Not now</string>
+    <string name="button_refresh">Refresh</string>
+    <string name="button_retry">Retry</string>
+    <string name="button_preferences">Preferences</string>
+    
+    <string name="wifi_netv_ssid">NeTV</string>
+    <string name="wifi_network_name">Network name</string>
+    <string name="wifi_password">Password</string>
+    <string name="wifi_security">Security</string>
+    <string name="wifi_network_other">Other...</string>
+    <string name="wifi_extra_error">Extra error information:</string>
+    
+    <string name="chumby_username">Username</string>
+    <string name="chumby_password">Password</string>
+    <string name="chumby_device_name">Device name</string>
+    <string name="chumby_hwver">Hardware version</string>
+    <string name="chumby_fwver">Firmware version</string>
+    <string name="chumby_device_name_unactivated">Unactivated device</string>
+    <string name="chumby_device_name_unconfigured">Unconfigured device</string>
+    
+    <!-- Notification -->
+    <string name="local_service_started">local_service_started</string>
+    
+    <!-- Splash screens -->
+    <string name="version_warning">Please update your app.\nSome features of NeTV are not compatible\nwith the current version.</string>
+    <string name="version_warning_short">Please update your app</string>
+    <string name="prompt_hotspot">Are you using this phone as a Wi-Fi hotspot for NeTV? If not, please exit this app and disable Wi-Fi hotspot in Settings.</string>
+    <string name="confirm_enable_wifi">Your Wi-Fi will be enabled to use this application.</string>
+    <string name="check_netv_power">Please ensure NeTV is properly powered up.</string>
+    <string name="check_netv_power_manual_ip">Please ensure NeTV is properly powered up.\n\nYou may try setting IP address of your NeTV manually in Preferences.</string>
+    <string name="check_netv_power_and_network">Please ensure NeTV is properly powered up and your phone is connected to the correct network.\n\nYour device was previously configured for \'xxxxxxxxxx\' network but your phone is currently connected to \'hhhhhhhhhh\' network.</string>
+    <string name="select_a_device">Select a device</string>
+    <string name="select_a_device_test">Select a device with correct MAC to test</string>
+    <string name="select_to_activate">Select to activate</string>
+    <string name="select_to_configure">Select to configure its network</string>
+    
+    <!-- ActivityBrowser -->
+    <string name="enter_a_url">Enter a URL</string>
+    
+    <!-- ActivityRemoteMain -->
+    <string name="controlling">Controlling</string>
+    <string name="manual_ip">manual</string>
+    
+    <!-- Widget & Preferences -->
+    <string name="got_new_sms_from">You have a new SMS from </string>
+    <string name="enable_sms">Show SMS on TV</string>
+    <string name="enable_sms_content">Show content of SMS</string>
+    <string name="sms_filter">SMS Filter</string>
+    <string name="sms_filter_description">Do not show SMS with these keywords</string>
+    <string name="sms_filter_input">Enter some keywords</string>
+    <string name="prefs_reset_ui">Reset NeTV interface</string>
+    <string name="prefs_reset_ui_description">Touch here to reset the NeTV device UI</string>
+    <string name="prefs_device_info">Device information</string>
+    <string name="prefs_device_info_description">Hardware, firmware version, etc.</string>
+    <string name="prefs_wifi_mac">Wi-Fi MAC address</string>
+    <string name="prefs_wifi_address">Wi-Fi IP address</string>
+    <string name="prefs_min_android">Minimum Android version</string>
+    <string name="prefs_manual_ip">Manual IP address</string>
+    <string name="prefs_manual_ip_description">Use fixed IP address to connect to NeTV</string>
+    <string name="prefs_manual_ip_input">Leave blank to disable this</string>
+    
+    <!-- ActivityConfiguring -->
+    <string name="please_wait_while_configuring">Please wait while your device is being configured...</string>
+    
+    <!-- ActivityAccount -->
+    <string name="please_wait_while_activating">Please wait while your device is being activated...</string>
+    <string name="invalid_user">Unknown username or incorrect password</string>
+    <string name="duplicate_device">This device name is already in use. Please pick a unique name</string>
+    <string name="chumby_username_too_short">The user name must have at least 4 characters</string>
+	<string name="chumby_device_name_too_short">The device name must be at least 1 character long</string>
+    
+    <string name="register_instructions">This application requires a chumby account to activate.\n\nDo you have a chumby account?</string>
+    <string name="multiple_device_found">Mutiple devices were found in your network</string>
+    <string name="activate_device">Activate chumby</string>
+	<string name="deactivate">Deactivate this device</string>
+	<string name="deactivate_description">Remove this device from your chumby account</string>
+	<string name="ays_deactivate">Are you sure you want to deactivate this device?</string>
+	<string name="deactivate_success">This device has been deactivated.</string>
+	<string name="deactivate_failure">Error deactivating device.</string>
+	<string name="chumby_device_name_bad_syntax">The device name must contain printable characters</string>
+	<string name="cant_fetch_device">Error fetching device information</string>
+	 
+</resources>

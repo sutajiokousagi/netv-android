@@ -1,0 +1,132 @@
+TODO:
+Make sure WEP also works on Android
+
+0.6.4
+Update new Factory Test procedure (allow multiple test bench)
+Merge Factory Test into the main version, automatically detect test condition
+Major cleaning up
+Use Async HTTP library source directly instead of binary 
+
+0.6.3
+Reload NeTVBrowser after activation (on Android) is completed
+Force clear timeout function in ActivityWifiDetails
+
+0.6.2
+Check firmware version (> 11) and switch to TCP accordingly
+
+0.6.1
+Put back UDP for compatibility until we release new firmware
+Use HTTP API for reseting CPanel UI in Prefs screen
+
+0.6.0
+Convert critical commands to TCP/HTTP
+Much shorter network configuration waiting time with HTTP
+Minimum version checking logic has bug
+
+0.5.9
+More stable WiFi list UI
+Add keep alive timer for Android html_config page
+
+0.5.8
+Fixed WifiDetails not receiving SSID from WifiList activity
+
+0.5.6
+Fixed TKIP configuration (this bug doesn't affect newer firmware)
+
+0.5.5
+The manual IP option should be shown when not able to discover a NeTV
+Use hidden Android API to detect WiFi hotspot mode
+
+0.5.4
+Adding activation with username & password with XAPI
+Allow user to configure fixed IP address to connect to NeTV
+
+0.5.3
+Refine ActivityBrowser UI
+Refine ActivityWifiDetails UI
+Refine ActivityAccount UI
+Wrong XML format for sending wifi/account details to NeTV (UI only)
+Fixed the 'Show password' checkbox being covered on smaller screen device
+
+0.5.2
+More robust photo sharing & send URL sequence
+Escape special XML characters like <>&'" within parameters data
+
+0.5.1
+Add widget UI & Preferences screen
+
+0.5.0
+Add a non-UI class that receive SMS & other alert events and send it to TV
+Check minimum version & show warning
+Hide Reset button
+Add sound_fx flag
+
+0.4.91
+Multitab param was encoded unnessarily
+
+0.4.9 
+Multitab implementation replaces iFrame implementation
+Percentage scrolling instead of absolute pixels
+Change setiframe to multitab command
+
+0.4.83
+New logo
+
+0.4.82
+Disable SMS receiver. Going to create a widget for this
+
+0.4.81
+ActivityWifiList shows unable to connect even it has slide in the Android's config UI
+This is due to not waiting enough to receive time confirmation from NeTV
+Refresh button in ActivityWifiList didn't work
+
+0.4.8
+Replaced simple browser url input dialog by a full ActivityBrowser
+Experimental synchronized scrolling
+Fixed major bugs in photo sharing
+
+0.4.71
+Add simple Browser input dialog
+
+0.4.71F
+Change wifi threshold to 5Mbps for upload and 5Mbps for download
+
+0.4.7F
+Android datetime returns leading '0' for date number
+
+0.4.7
+Use proper SetIFrame command
+
+0.4.6
+Add experimental Flick feature with URL and photo
+Add SMS -> TickerEvent feature
+BTS:
+- Add TickerEvent command
+- Add SetIFrame command (support Flick feature)
+
+0.4.6F
+Wrong color for failure in upload/download tests.
+TODO:
+Special parsing for 'hwver' field.
+Read memory info from NeTV
+
+0.4.5F
+Add delay before starting the tests.
+Somehow starting too fast causes the test UI not to slide up all the way.
+
+0.4.4F
+Synchronize correctly with Android config UI on NeTV
+WiFi list on Android now sort in the same order as on NeTV UI
+This is the initial test app for factory
+Add logging to SD card for each test
+
+- Directly use SetUrl command to switch to Android config page
+- Refactor ActivityWifiList to use polling state machine
+- Faster Splash screen waiting time, less number of repeat handshake
+- IsConnectedNeTV is implemented more correctly
+- Add functions to generate random data & upload file to HTTP server
+
+0.4.3
+Added ActivityFactory for initial connection to NeTV in factory
+BTS:
+- First implementation of pure polling-base state machine

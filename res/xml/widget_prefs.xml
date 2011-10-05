@@ -1,0 +1,91 @@
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	
+	<PreferenceCategory android:title="SMS Settings">
+		<CheckBoxPreference
+			android:key="widget_sms_enable"
+			android:title="@string/enable_sms"
+			android:persistent="true"
+		/>
+		<CheckBoxPreference
+			android:key="widget_sms_content"
+			android:title="@string/enable_sms_content"
+			android:persistent="true"
+		/>
+		<EditTextPreference
+			android:key="widget_sms_filter"
+			android:title="@string/sms_filter"
+			android:summary="@string/sms_filter_description"
+			android:dialogTitle="@string/sms_filter_input"
+			android:persistent="true"
+		/>
+	</PreferenceCategory>
+	
+	<PreferenceCategory android:title="@string/app_name">
+		<EditTextPreference
+			android:key="manual_ip"
+			android:title="@string/prefs_manual_ip"
+			android:summary="@string/prefs_manual_ip_description"
+			android:dialogTitle="@string/prefs_manual_ip_input"
+			android:persistent="true"
+		/>
+		<PreferenceScreen
+				android:key="device_info_preference_screen"
+				android:title="@string/prefs_device_info"
+				android:summary="@string/prefs_device_info_description">
+				<Preference
+					android:key="chumby_device_name"
+					android:title="@string/chumby_device_name"
+					android:selectable="false"
+					android:summary=""
+				/>
+				<Preference
+					android:key="chumby_username"
+					android:title="@string/chumby_username"
+					android:selectable="false"
+					android:summary=""
+				/>
+				<Preference
+					android:key="guid"
+					android:title="GUID"
+					android:selectable="false"
+					android:summary=""
+				/>
+				<Preference
+					android:key="mac"
+					android:title="@string/prefs_wifi_mac"
+					android:selectable="false"
+					android:summary=""
+				/>
+				<Preference
+					android:key="chumby_address"
+					android:title="@string/prefs_wifi_address"
+					android:selectable="false"
+					android:summary=""
+				/>
+				<Preference
+					android:key="hwver"
+					android:title="@string/chumby_hwver"
+					android:selectable="false"
+					android:summary=""
+				/>
+				<Preference
+					android:key="fwver"
+					android:title="@string/chumby_fwver"
+					android:selectable="false"
+					android:summary=""
+				/>
+				<Preference
+					android:key="minAndroid"
+					android:title="@string/prefs_min_android"
+					android:selectable="false"
+					android:summary=""
+				/>
+		</PreferenceScreen>
+		<Preference
+			android:title="@string/prefs_reset_ui"
+			android:summary="@string/prefs_reset_ui_description"
+	        android:key="reset_cpanel" />
+	</PreferenceCategory>
+
+</PreferenceScreen>

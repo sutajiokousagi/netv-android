@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+				    
+	<ImageView android:id="@+id/remote_background"
+         android:layout_width="fill_parent"
+         android:layout_height="fill_parent"
+         android:src="@drawable/grey_bg" android:scaleType="fitXY">
+   	</ImageView>
+   	  	
+   	<LinearLayout
+   		android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+        android:orientation="vertical" >
+        
+        <View
+	        android:layout_width="fill_parent"
+	        android:layout_height="10dp">
+    	</View>
+        
+        <LinearLayout
+	   		android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+	        android:orientation="horizontal" >
+
+		    <Button android:id="@+id/btn_controlpanel"
+		            		android:drawableTop="@drawable/btn_controlpanel"
+		            		android:background="@color/remote_btn_background"
+						    android:layout_height="wrap_content"
+						    android:layout_width="wrap_content"
+						    android:layout_weight="0.5"
+						     />
+						    
+			<Button android:id="@+id/btn_widget"
+		            		android:drawableTop="@drawable/btn_widget"
+		            		android:background="@color/remote_btn_background"
+						    android:layout_height="wrap_content"
+						    android:layout_width="wrap_content"
+						    android:layout_weight="0.5"
+						    />
+	   	</LinearLayout>
+	   	
+	   	<View
+	        android:layout_width="fill_parent"
+	        android:layout_height="10dp">
+    	</View>
+	   	
+	   	<LinearLayout
+	   		android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+	        android:orientation="horizontal" >
+	        
+			<Button android:id="@+id/btn_up"
+		            		android:drawableTop="@drawable/up"
+		            		android:background="@color/remote_btn_background"
+						    android:layout_height="wrap_content"
+						    android:layout_width="fill_parent" />
+		</LinearLayout>
+		
+		<View
+	        android:layout_width="fill_parent"
+	        android:layout_height="20dp">
+    	</View>
+		
+		<LinearLayout
+	   		android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+	        android:orientation="horizontal" >
+	        
+			<Button android:id="@+id/btn_left"
+		            		android:drawableTop="@drawable/left"
+		            		android:background="@color/remote_btn_background"
+						    android:layout_height="wrap_content"
+						    android:layout_width="wrap_content"
+						    android:layout_weight="0.33"
+						    />
+						    
+			<Button android:id="@+id/btn_center"
+		            		android:drawableTop="@drawable/center"
+		            		android:background="@color/remote_btn_background"
+						    android:layout_height="wrap_content"
+						    android:layout_width="wrap_content"
+						    />
+						   
+			<Button android:id="@+id/btn_right"
+		            		android:drawableTop="@drawable/right"
+		            		android:background="@color/remote_btn_background"
+						    android:layout_height="wrap_content"
+						    android:layout_width="wrap_content"
+						    android:layout_weight="0.33"
+						    />
+		</LinearLayout>
+		
+		<View
+	        android:layout_width="fill_parent"
+	        android:layout_height="20dp">
+    	</View>
+	
+		<LinearLayout
+			android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+	        android:orientation="horizontal" >
+	        
+			<Button android:id="@+id/btn_down"
+		            		android:drawableTop="@drawable/down"
+		            		android:background="@color/remote_btn_background"
+						    android:layout_height="wrap_content"
+						    android:layout_width="fill_parent"
+						    />
+		</LinearLayout>
+
+	</LinearLayout>
+	
+	<LinearLayout	
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:layout_above="@+id/bottomRow"
+		>
+	
+		<TextView
+    		android:text=""
+    		android:id="@+id/textViewRemoteTitle"
+    		android:layout_width="fill_parent"
+    		android:layout_height="16dp"
+    		android:gravity="center"
+    		android:textSize="12sp"
+		    android:textColor="#FFFFFF" 
+    		/>
+    		
+    	<TextView
+    		android:text=""
+    		android:id="@+id/textViewVersionWarning"
+    		android:layout_width="fill_parent"
+    		android:layout_height="16dp"
+    		android:gravity="center"
+    		android:textSize="12sp"
+		    android:textColor="#CC0000" 
+    		/>
+    		
+	</LinearLayout>
+	    
+	<LinearLayout
+		android:id="@+id/bottomRow"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:layout_alignParentBottom="true"
+		android:weightSum="1" >
+					     
+		<Button android:id="@+id/btn_browser"
+	    				android:text="Browser"
+					    android:layout_height="wrap_content"
+					    android:layout_width="0dp"
+					    android:layout_weight="1"
+					     />
+	</LinearLayout>
+				     
+   	<CheckBox android:id="@+id/chkCursorMode"
+   		 android:text="Relative" 
+   		 android:layout_width="wrap_content"
+   		 android:layout_height="wrap_content"
+   		 android:layout_alignParentBottom="true"
+   		 android:visibility="gone">
+   	</CheckBox>
+   	
+</RelativeLayout>

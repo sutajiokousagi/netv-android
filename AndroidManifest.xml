@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      	package="com.chumby.NeTV"
+      	android:versionCode="1"
+      	android:installLocation="auto" android:versionName="0.6.4">
+      
+    <uses-sdk android:minSdkVersion="8" />
+
+    <application android:icon="@drawable/icon"
+    			 android:label="@string/app_name"
+    			 android:name=".AppNeTV" >
+        <activity android:name=".ActivitySplash"
+                  android:label="@string/app_name"
+                  android:clearTaskOnLaunch="false"
+                  android:screenOrientation="portrait"
+                  android:windowSoftInputMode="adjustResize|stateAlwaysHidden" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+                
+        <activity android:name=".ActivityBaseNeTV" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+        <activity android:name=".ActivityWifiList" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+        <activity android:name=".ActivityWifiDetails" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+	 	<activity android:name=".ActivityAccount" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".ActivityConfiguring" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+        <activity android:name=".NeTVWidgetPrefs" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+        <activity android:name=".ActivityRemoteMain" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
+        		  android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+		    <intent-filter android:label="Send to TV" > 
+				<action android:name="android.intent.action.VIEW" />
+				<action android:name="android.intent.action.SEND" />
+		    	<category android:name="android.intent.category.DEFAULT" /> 
+		    	<data android:mimeType="image/*" />
+		    </intent-filter>
+		    <intent-filter android:label="Send to TV" > 
+		    	<action android:name="android.intent.action.CHOOSER" />  
+		    	<category android:name="android.intent.category.DEFAULT" /> 
+		    	<data android:mimeType="image/*" />
+		    </intent-filter>
+		</activity>
+		<activity android:name=".ActivityBrowser" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
+        		  android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+			<intent-filter android:label="View on TV">
+            	<action android:name="android.intent.action.VIEW" />
+            	<action android:name="android.intent.action.SEND" />
+            	<category android:name="android.intent.category.DEFAULT" />
+            	<data android:scheme="http" />
+        	</intent-filter>
+		</activity>
+
+		<service android:enabled="true" android:name=".CommService"></service>
+		
+		<!-- Broadcast Receiver that will process AppWidget updates -->
+        <receiver android:name=".NeTVWidget" android:label="@string/app_name">
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_netv" />
+            <intent-filter> 
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter> 
+        </receiver>
+               
+		<!-- These are for the factory test -->
+		<activity android:name=".ActivityFactoryTest1" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />	
+	            
+  	</application>
+  	
+  	<uses-permission android:name="android.permission.INTERNET" />
+  	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+  	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+  	<uses-permission android:name="android.permission.VIBRATE" />
+  	<uses-permission android:name="android.permission.RECEIVE_SMS" />
+  	
+  	<!-- These are for the factory test -->
+  	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+  	
+</manifest>

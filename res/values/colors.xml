@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="wifilist_highlight_background">#00AAEE</color>
+	<color name="wifilist_highlight_text">#ffffff</color>
+	<color name="remote_btn_text">#ffffff</color>
+	<color name="remote_btn_background">#00000000</color>
+	<color name="transparent">#00000000</color> 
+</resources>

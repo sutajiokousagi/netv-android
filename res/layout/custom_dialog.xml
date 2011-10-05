@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:minWidth="280dip"
+    android:layout_height="wrap_content">
+
+    <LinearLayout 
+        android:orientation="vertical"
+        android:background="@drawable/header"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+    
+        <TextView
+            style="@style/DialogText.Title"
+            android:id="@+id/title"
+            android:paddingRight="8dip"
+            android:paddingLeft="8dip"
+            android:background="@drawable/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    
+    </LinearLayout>
+
+    <LinearLayout 
+        android:id="@+id/content"
+        android:orientation="vertical"
+        android:background="@drawable/center9"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+    
+        <TextView
+            style="@style/DialogText"
+            android:id="@+id/message"
+            android:padding="5dip"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
+            
+	</LinearLayout>
+	
+    <LinearLayout 
+        android:orientation="vertical"
+        android:background="@drawable/footer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+            
+    	<ListView
+		android:id="@+id/listview"
+		android:padding="6dip"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:divider="#FFFFFF"
+        android:dividerHeight="0dip" />
+		
+    </LinearLayout>
+    
+</LinearLayout>

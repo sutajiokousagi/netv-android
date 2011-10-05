@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:keepScreenOn="true"
+    >
+    <ImageView
+    		android:id="@+id/chumby_logo"
+    		android:layout_height="wrap_content"
+    		android:layout_width="wrap_content"
+    		android:scaleType="centerInside"
+    		android:src="@drawable/chumby"
+    		android:layout_centerHorizontal="true"
+    		android:layout_centerVertical="true"
+    		/>
+    <TextView
+    		android:text="0.0.0"
+    		android:id="@+id/textViewVersion"
+    		android:layout_width="fill_parent"
+    		android:layout_height="wrap_content"
+    		android:layout_below="@+id/chumby_logo"
+    		android:gravity="center"
+    		android:textSize="14sp"
+		    android:textColor="#CCCCCC" 
+    		/>
+	<TextView
+    		android:text=""
+    		android:id="@+id/textViewVersionWarning"
+    		android:layout_width="fill_parent"
+    		android:layout_height="wrap_content"
+    		android:layout_below="@+id/textViewVersion"
+    		android:gravity="center"
+    		android:textSize="14sp"
+		    android:textColor="#CC0000" 
+    		/>
+    <TextView
+    		android:id="@+id/textViewStatus"
+    		android:text="A good placeholder for a nice slogan"
+    		android:layout_width="fill_parent"
+    		android:layout_height="wrap_content"
+    		android:gravity="center_horizontal"
+    		android:layout_alignParentBottom="true"
+    		/>
+</RelativeLayout>
