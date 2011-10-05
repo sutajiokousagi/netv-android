@@ -2,6 +2,7 @@ TODO:
 Make sure WEP also works on Android
 
 0.6.4
+Tested for Release Firmware 14
 Update new Factory Test procedure (allow multiple test bench)
 Merge Factory Test into the main version, automatically detect test condition
 Major cleaning up
