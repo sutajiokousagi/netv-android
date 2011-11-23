@@ -15,25 +15,34 @@ import java.util.Date;
 import java.util.Random;
 
 import android.content.DialogInterface;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Html;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.Interpolator;
+import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-public class ActivityFactoryTest1 extends ActivityBaseNeTV
+public class ActivityFactoryTest1 extends ActivityBaseNeTV implements OnClickListener
 {
 	//UI
-	TextView statusTextView;
-	ProgressBar progressBar;
+	TextView _statusTextView;
+	ProgressBar _progressBar;
+	ImageView _loadingIcon;
 	
 	//Initialize Flag
 	boolean _triedConnectNeTV;
@@ -89,7 +98,7 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV
 	BufferedWriter bwriter;
 	
 	//List UI
-	ListView logList;
+	ListView _listView;
 	ConsoleListAdapter consoleListViewAdapter;
 	ArrayList<ConsoleListItem> consoleListItemsArray;
 	
@@ -156,16 +165,21 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV
     	
         _httpClient = new AsyncHttpClient();
         
-    	statusTextView = (TextView)findViewById(R.id.textViewStatus);
-    	progressBar = (ProgressBar)findViewById(R.id.progressBar1);
-    	logList = (ListView)findViewById(R.id.logList);
-    	statusTextView.setText("");
-    	progressBar.setMax(100);
-    	progressBar.setProgress(0);
+        //Navbar UI
+        ((ImageView) this.findViewById(R.id.btn_back)).setOnClickListener(this);
+        _loadingIcon = (ImageView)findViewById(R.id.loading_icon);
+        
+        //Custom UI
+    	_statusTextView = (TextView)findViewById(R.id.textViewStatus);
+    	_progressBar = (ProgressBar)findViewById(R.id.progressBar1);
+    	_listView = (ListView)findViewById(R.id.logList);
+    	_statusTextView.setText("");
+    	_progressBar.setMax(100);
+    	_progressBar.setProgress(0);
     	
 		consoleListItemsArray = new ArrayList<ConsoleListItem>();   
     	consoleListViewAdapter = new ConsoleListAdapter(this, consoleListItemsArray);
-    	logList.setAdapter( consoleListViewAdapter );
+    	_listView.setAdapter( consoleListViewAdapter );
     	
     	try {
     		logFileWriter = new FileWriter(Environment.getExternalStorageDirectory()+ "/" + LOG_FILE, true);		//append mode
@@ -247,6 +261,14 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV
     	
     	resetTest();
     	
+    	//Spin the loading icon
+    	Animation animation = new RotateAnimation (0.0f, 359.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+    	animation.setRepeatCount(Animation.INFINITE);
+    	animation.setDuration(2000);
+    	animation.setInterpolator(new Interpolator() { public float getInterpolation(float arg0) { return arg0; } });
+    	_loadingIcon.startAnimation(animation);
+    	_loadingIcon.setVisibility(View.VISIBLE);
+    	
     	_handler.postDelayed(initializeSequenceRunnable, 3000);
     }
     
@@ -321,6 +343,36 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV
 		}
 		return false;
 	}
+	
+	/**
+	 * Buttons event
+	 * 
+	 * @category UI Events
+	 */
+	public void onClick(View v)
+	{
+    	_vibrator.vibrate(120);
+    	  
+    	//Sound feedback
+    	if (ENABLE_SOUND_FX)
+    	{
+	    	_mediaPlayer = MediaPlayer.create(this, R.raw.pop);
+	    	if (_mediaPlayer != null)
+	    	{
+	    		_mediaPlayer.start();
+	    		_mediaPlayer.setOnCompletionListener(new OnCompletionListener()
+	    		{
+	    			public void onCompletion(MediaPlayer mp) { mp.release(); }
+	    		});
+	    	}
+    	}
+
+		if (v.getId() == R.id.btn_back)
+		{
+			finish();
+			return;
+		}
+	}
 
 	
     // UI Utility functions
@@ -366,7 +418,7 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV
 		String coloredText = "<font color='#" + hexcolor + "'>" + text + "</font>";
 		consoleListItemsArray.add( new ConsoleListItem(coloredText, "") );
 		consoleListViewAdapter.notifyDataSetChanged();
-		logList.setSelection(consoleListViewAdapter.getCount() - 1);
+		_listView.setSelection(consoleListViewAdapter.getCount() - 1);
 		
 		//logListItems.add( "<font color='#" + hexcolor + "'>" + text + "</font>" );
 	}
@@ -386,7 +438,7 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV
 	{
 		if (hexcolor == null)
 			hexcolor = "00b0f0";
-		statusTextView.setText(Html.fromHtml( "<font color='#" + hexcolor + "'>" + text + "</font>") );
+		_statusTextView.setText(Html.fromHtml( "<font color='#" + hexcolor + "'>" + text + "</font>") );
 	}
 	
 	/**
@@ -396,12 +448,16 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV
 	{
 		if (_currentProgress > 100)
 			_currentProgress = 100;
-		progressBar.setProgress( (int)(_currentProgress) );
+		_progressBar.setProgress( (int)(_currentProgress) );
 		long sizeMB = RANDOM_DATA_SIZE / 1024 / 1024;
 		
 		if (_currentProgress == 100)
 		{
-			progressBar.setVisibility(View.INVISIBLE);
+			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+			params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+			_statusTextView.setLayoutParams(params);
+
+			_progressBar.setVisibility(View.INVISIBLE);
 			setStatusMessage("Finished generating random data [" + sizeMB + "MB]");
 		}
 		else
@@ -1093,7 +1149,7 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV
 			if (!_myApp.isConnectedNeTV())
 	    	{
 	    		if (SUPER_VERBOSE)
-					statusTextView.setText("Connecting to NeTV Access Point...");    		    		
+					_statusTextView.setText("Connecting to NeTV Access Point...");    		    		
 	    		_handler.postDelayed(initializeSequenceRunnable, 3000);
 	    		Log.d(TAG, this.getLocalClassName() + ": connecting to NeTV Access Point...");
 	    		_myApp.connectNeTV(_factory_ssid);
@@ -1110,7 +1166,7 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV
     		}
     		
     		if (SUPER_VERBOSE)
-				statusTextView.setText("Could not connect to NeTV AP!");
+				_statusTextView.setText("Could not connect to NeTV AP!");
     		Log.e(TAG, this.getLocalClassName() + ": could not connect to NeTV AP!");
     		//promptCheckNeTV();
     		_retryCounter = 0;
@@ -1122,7 +1178,7 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV
 		if (!_sentHandshake)
 		{
 			if (SUPER_VERBOSE)
-				statusTextView.setText("Retrieving NeTV device info...");
+				_statusTextView.setText("Retrieving NeTV device info...");
 			Log.d(TAG, this.getLocalClassName() + ": sent 1st handshake message");
 			if (_retryCounter < 2)
 			{
@@ -1155,7 +1211,7 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV
 					String animatedText = "Waiting for NeTV to reponse";
 					for (int i=0; i<(_retryCounter%4); i++)			animatedText += ".";
 					for (int i=0; i<3-(_retryCounter%4); i++)		animatedText += " ";
-					statusTextView.setText(animatedText);
+					_statusTextView.setText(animatedText);
 				}
 				return;
 			}
@@ -1437,8 +1493,9 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV
 		addToLogUI("Finished automatic testing", "00b0f0");
 		addToLogUI("Continue with manual IR Test on TV now", "00b0f0");
 		setStatusMessage(" ");
+		_loadingIcon.setVisibility(View.INVISIBLE); 
 		_totalTestTime = (System.currentTimeMillis() - _totalTestTime) / 1000;
-			
+
 		//Log to SD card
 		writeSummaryLog();
 		

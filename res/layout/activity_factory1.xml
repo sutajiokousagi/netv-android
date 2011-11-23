@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:keepScreenOn="true"
@@ -52,6 +51,15 @@
     		
     <!-- Others -->
     
+	<ProgressBar
+    		android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:id="@+id/progressBar1"
+			style="?android:attr/progressBarStyleHorizontal"
+			android:layout_alignParentBottom="true"
+			android:gravity="center"
+			/>
+			
     <TextView
     		android:id="@+id/textViewStatus"
     		android:text="doing something..."
@@ -60,14 +68,7 @@
     		android:gravity="center"
     		android:layout_above="@+id/progressBar1"
     		/>
-    <ProgressBar
-    		android:layout_height="wrap_content"
-			android:layout_width="fill_parent"
-			android:id="@+id/progressBar1"
-			style="?android:attr/progressBarStyleHorizontal"
-			android:layout_alignParentBottom="true"
-			android:gravity="center"
-			/>
+
 			
     <ListView android:id="@+id/logList"
 	        android:layout_width="fill_parent" 
