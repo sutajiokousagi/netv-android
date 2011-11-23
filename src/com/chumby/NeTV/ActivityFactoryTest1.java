@@ -18,7 +18,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Html;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -34,7 +33,6 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV
 {
 	//UI
 	TextView statusTextView;
-	TextView logTextView;
 	ProgressBar progressBar;
 	
 	//Initialize Flag
@@ -145,7 +143,7 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV
     {
     	Log.d(TAG, this.getLocalClassName() + " onCreate()");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.factory1);
+        setContentView(R.layout.activity_factory1);
 
     	//Increase the default Heap memory size
     	//Otherwise, app will crash when we handle large file
@@ -158,12 +156,9 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV
     	
         _httpClient = new AsyncHttpClient();
         
-    	logTextView = (TextView)findViewById(R.id.textViewLog);
-    	logTextView.setMovementMethod(new ScrollingMovementMethod());
     	statusTextView = (TextView)findViewById(R.id.textViewStatus);
     	progressBar = (ProgressBar)findViewById(R.id.progressBar1);
     	logList = (ListView)findViewById(R.id.logList);
-    	logTextView.setText("");
     	statusTextView.setText("");
     	progressBar.setMax(100);
     	progressBar.setProgress(0);
@@ -373,7 +368,6 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV
 		consoleListViewAdapter.notifyDataSetChanged();
 		logList.setSelection(consoleListViewAdapter.getCount() - 1);
 		
-		//logTextView.setText(Html.fromHtml( logTextView.getText() + "<br/><font color='#" + hexcolor + "'>" + text + "</font>" ) );
 		//logListItems.add( "<font color='#" + hexcolor + "'>" + text + "</font>" );
 	}
 	
@@ -667,9 +661,10 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV
 		    @Override
 		    public void onFailure(Throwable error)
 		    {
+		    	String errorMsg = (error == null) ? "" : error.toString();
 		    	addToLogUI("Unable to upload file", "ff0000");
 				Log.e(TAG, "Unable to upload file");
-				Log.e(TAG, error.getMessage());
+				Log.e(TAG, errorMsg);
 		    	_uploadSize = 0;
 				_uploadTime = 0;
 				_passTest_Upload = false;
@@ -760,9 +755,10 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV
 		    @Override
 		    public void onFailure(Throwable error)
 		    {
+		    	String errorMsg = (error == null) ? "" : error.toString();
 		    	addToLogUI("Unable to download file", "ff0000");
 				Log.e(TAG, "Unable to download file");
-				Log.e(TAG, error.getMessage());
+				Log.e(TAG, errorMsg);
 		    	_downloadTime = 0;
 		    	_passTest_Download = false;
 		    	_performedTest_Download = true;

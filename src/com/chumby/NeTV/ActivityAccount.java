@@ -53,7 +53,7 @@ public class ActivityAccount extends ActivityBaseNeTV implements OnClickListener
     {
 		Log.d(TAG, this.getLocalClassName() + " onCreate()");
     	super.onCreate(savedInstanceState);
-		setContentView(R.layout.account_details);
+		setContentView(R.layout.activity_account);
 		
     	//Setup UI
 		txtUsername = (EditText)findViewById(R.id.txtChumbyUsername);

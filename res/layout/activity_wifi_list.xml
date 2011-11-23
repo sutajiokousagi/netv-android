@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    
+    <!-- Background & navbar -->
+        
+    <ImageView
+    		android:layout_height="fill_parent"
+    		android:layout_width="fill_parent"
+    		android:scaleType="centerCrop"
+    		android:src="@drawable/device_list_bg"
+    		android:layout_centerHorizontal="true"
+    		android:layout_centerVertical="true"
+    		/>
+    	    
+    <ImageView
+    		android:id="@+id/navbar"
+    		android:layout_height="wrap_content"
+    		android:layout_width="fill_parent"
+    		android:scaleType="centerCrop"
+    		android:src="@drawable/navbar_bg"
+    		android:layout_centerHorizontal="true"
+    		android:layout_alignParentTop="true"
+    		/>
+    		
+    <!-- Back button & spinning icon -->
+    	
+    <ImageView
+    		android:id="@+id/btn_back"
+    		android:layout_height="wrap_content"
+    		android:layout_width="wrap_content"
+    		android:scaleType="centerCrop"
+    		android:src="@drawable/navbar_back"
+    		android:layout_alignParentLeft="true"
+    		android:layout_alignParentTop="true"
+    		android:visibility="invisible"
+    		/>
+    		
+    <ImageView
+    		android:id="@+id/loading_icon"
+    		android:layout_height="wrap_content"
+    		android:layout_width="wrap_content"
+    		android:scaleType="centerCrop"
+    		android:src="@drawable/loading_icon"
+    		android:layout_alignParentRight="true"
+    		android:layout_alignParentTop="true"
+    		android:visibility="invisible"
+    		/>
+    		
+    <!-- The rest -->
+    
+	<TextView 
+		android:id="@+id/txtSelectHomeWifi"
+		android:text="@string/select_home_wifi"
+	    android:layout_width="fill_parent" 
+	    android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:textColor="#00CCFF"
+        android:layout_below="@+id/navbar"
+	    />
+	    
+	<LinearLayout
+	    android:id="@+id/linearWifiButtons"
+	    android:orientation="horizontal"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentBottom="true"
+	    >
+		<Button
+			android:id="@+id/button_refresh_wifi"
+			android:text="@string/button_refresh"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:layout_weight="0.5"
+			/>
+		<Button
+			android:id="@+id/button_next_wifi"
+			android:text="@string/button_next"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:layout_weight="0.5"
+			/>
+	</LinearLayout>
+	<ListView
+		android:id="@+id/list_wifi"
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent"
+		android:layout_below="@+id/txtSelectHomeWifi"
+		android:layout_above="@+id/linearWifiButtons"
+		android:layout_centerHorizontal="true"
+		android:divider="#333333"
+        android:dividerHeight="1dip"
+        	/>
+</RelativeLayout>

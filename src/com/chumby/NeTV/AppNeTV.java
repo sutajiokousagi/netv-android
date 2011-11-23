@@ -1,6 +1,7 @@
 package com.chumby.NeTV;
 
 import java.lang.reflect.Method;
+import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -32,6 +33,7 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.net.wifi.WifiManager.MulticastLock;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -64,6 +66,7 @@ public class AppNeTV extends Application implements MessageReceiverInterface
 	public static final String NETV_UISTATE_ACTIVATION = "configuring";
 	public static final String NETV_UISTATE_REMOTE = "remote";
 	public static final String NETV_UISTATE_BROWSER = "browser";
+	public static final String NETV_UISTATE_TEXTINPUT = "textinput";
 	public static final String NETV_UISTATE_FACTORY_LOADING = "androidtest";
 	public static final String NETV_UISTATE_FACTORY_IRREMOTE = "irremote";
 	public static final String NETV_UISTATE_FACTORY_RESET_BTN = "resetbtn";
@@ -137,6 +140,7 @@ public class AppNeTV extends Application implements MessageReceiverInterface
 	
 	//Wifi
 	public WifiManager 			 	 _wifiManager;
+	private MulticastLock 			 _multicastLock;
 	
 	//Local Data Storage
 	private String					 _appVersion;
@@ -269,6 +273,9 @@ public class AppNeTV extends Application implements MessageReceiverInterface
     	//Setup WiFi
     	if (_wifiManager == null)
     		_wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+    	_multicastLock = _wifiManager.createMulticastLock("whatiswrongwithhtc");
+    	_multicastLock.setReferenceCounted(true);
+    	_multicastLock.acquire();
 			
 		//Setup event receiver for CommService
 		_messageReceiver = new MessageReceiver(this);
@@ -315,14 +322,15 @@ public class AppNeTV extends Application implements MessageReceiverInterface
 		
 	@Override
 	public void onTerminate()
-	{		  	   	
+	{		
     	//Return NeTV UI to correct state
 		if (isConnectedNeTV())
 		{
 			ResetUrlHTTP(null);
-			//sendAndroidJSActivationCancel();
-			//sendAndroidJSActivationCancel();
 		}
+		
+		if (_multicastLock != null)
+			_multicastLock.release();
 		
 		//Always unbind & stop the service (save battery)
 		stopCommService();
@@ -669,9 +677,21 @@ public class AppNeTV extends Application implements MessageReceiverInterface
         	config.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
         	config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP40);
         	config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP104);
-
-        	//we always use ascii key here (put in quotes)
-        	config.wepKeys[0] = "\"".concat(wifi_password).concat("\"");
+        	
+        	// hex (perfect condition)
+        	if (wifi_password.matches ("^[\\da-fA-F]+$") && (wifi_password.length()==10 || wifi_password.length()==26))
+        	{
+        		config.wepKeys[0] = wifi_password;
+        	}
+        	else if (wifi_password.length() == 5 || wifi_password.length() == 13)
+        	{
+        		wifi_password = StringToHex(wifi_password).toUpperCase();
+        		config.wepKeys[0] = wifi_password;									//hex
+        	}
+        	else
+        	{
+        		config.wepKeys[0] = "\"".concat(wifi_password).concat("\"");		//ascii
+        	}
         	config.wepTxKeyIndex = 0;
         }
         //WPA/WPA2
@@ -1128,7 +1148,7 @@ public class AppNeTV extends Application implements MessageReceiverInterface
 		if (hashMapSize < 1)
 		{
 			stringBuilder.append("</xml>");
-			return _myBoundService.queueMessage(stringBuilder.toString(), address);
+			return _myBoundService.sendMessage(stringBuilder.toString(), address);
 		}
 		
 		stringBuilder.append("<data>");
@@ -1154,7 +1174,7 @@ public class AppNeTV extends Application implements MessageReceiverInterface
 		}
 		
 	    stringBuilder.append("</data></xml>");
-		return _myBoundService.queueMessage(stringBuilder.toString(), address);
+	    return _myBoundService.sendMessage(stringBuilder.toString(), address);
 	}
 	
 	/**
@@ -1165,6 +1185,21 @@ public class AppNeTV extends Application implements MessageReceiverInterface
 		return input.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;");		//Not needed   .replace("'", "&apos;")
     }
 	
+	/**
+	 * @category DataComm Utility
+	 */
+	public String StringToHex(String arg)
+	{
+		byte[] bytes = arg.getBytes();
+		BigInteger bigInt = new BigInteger(bytes);
+		String hexString = bigInt.toString(16);
+		
+		StringBuilder sb = new StringBuilder();
+		while ((sb.length() + hexString.length()) < (2 * bytes.length))
+			sb.append("0");
+		sb.append(hexString);
+		return sb.toString();
+	}
 	
     // HTTP Data Communication
 	//----------------------------------------------------------------------------
@@ -1642,7 +1677,7 @@ public class AppNeTV extends Application implements MessageReceiverInterface
         String wifi_password = getPreferenceString(PREF_WIFI_PASSWORD, "");
         editor.putString(PREF_WIFI_PASSWORD, wifi_password);
         
-        //The following WEP key validation will be done again in NeTVServer
+        //The following validations will be done again in NeTVServer
         
         //No password given
         if (wifi_password.length() < 1)
@@ -1658,12 +1693,16 @@ public class AppNeTV extends Application implements MessageReceiverInterface
         	// WEPAUTO
         	editor.putString(PREF_WIFI_AUTHENTICATION, AUTHENTICATIONS[1]);
         	
-    		// hex (good condition)
+    		// hex (perfect condition)
         	if (wifi_password.matches ("^[\\da-fA-F]+$") && (wifi_password.length()==10 || wifi_password.length()==26))
+        	{
            		editor.putString(PREF_WIFI_ENCODING, ENCODINGS[1]);
-        	// hex (trying our luck here)
-        	if (wifi_password.length()==5 || wifi_password.length()==13)
+        	}
+        	// directly convert ascii characters into hexadecimal characters
+        	else if (wifi_password.length()==5 || wifi_password.length()==13)
+        	{
         		editor.putString(PREF_WIFI_ENCODING, ENCODINGS[1]);
+        	}
     		// ascii
         	else
         		editor.putString(PREF_WIFI_ENCODING, ENCODINGS[2]);

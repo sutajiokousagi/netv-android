@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -34,6 +35,7 @@ public class CustomDialog extends Dialog
         private ArrayList<CustomListItem> 	listViewData;
         private View 						contentView;
         private AdapterView.OnItemClickListener listViewItemClickListener;
+        private View.OnClickListener		clickListener;
 
         public Builder(Context context) {
             this.context = context;
@@ -78,6 +80,16 @@ public class CustomDialog extends Dialog
             this.title = title;
             return this;
         }
+        
+        /**
+         * Set click handler for the buttons
+         * @param title
+         * @return
+         */
+        public Builder setOnClickListener(View.OnClickListener listener) {
+            this.clickListener = listener;
+            return this;
+        }       
         
         /**
          * Set the data for list view
@@ -144,6 +156,17 @@ public class CustomDialog extends Dialog
 	                	listViewItemClickListener.onItemClick(arg0,arg1,position,id); 
 	                }
 	            });
+            }
+            
+            if (clickListener != null)
+            {
+            	((Button)layout.findViewById(R.id.btn_refresh)).setOnClickListener(new View.OnClickListener()
+            	{
+					public void onClick(View v)
+					{
+						clickListener.onClick(v);
+					}
+				});
             }
             
             // set the content message

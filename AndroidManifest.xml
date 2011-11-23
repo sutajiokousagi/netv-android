@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       	package="com.chumby.NeTV"
       	android:versionCode="1"
-      	android:installLocation="auto" android:versionName="0.6.4">
+      	android:installLocation="auto" android:versionName="0.6.8"
+      	android:theme="@android:style/Theme.NoTitleBar" >
       
     <uses-sdk android:minSdkVersion="8" />
 
@@ -13,6 +14,7 @@
                   android:label="@string/app_name"
                   android:clearTaskOnLaunch="false"
                   android:screenOrientation="portrait"
+                  android:theme="@android:style/Theme.NoTitleBar"
                   android:windowSoftInputMode="adjustResize|stateAlwaysHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,14 +22,14 @@
             </intent-filter>
         </activity>
                 
-        <activity android:name=".ActivityBaseNeTV" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-        <activity android:name=".ActivityWifiList" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-        <activity android:name=".ActivityWifiDetails" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
-	 	<activity android:name=".ActivityAccount" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".ActivityConfiguring" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-        <activity android:name=".NeTVWidgetPrefs" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-        <activity android:name=".ActivityRemoteMain" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
-        		  android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+        <activity android:name=".ActivityBaseNeTV" android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar" android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+        <activity android:name=".ActivityWifiList" android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar" android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+        <activity android:name=".ActivityWifiDetails" android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar" android:windowSoftInputMode="adjustResize" />
+	 	<activity android:name=".ActivityAccount" android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".ActivityConfiguring" android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar" android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+        <activity android:name=".NeTVWidgetPrefs" android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar" android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+        <activity android:name=".ActivityTextInput" android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar" android:windowSoftInputMode="adjustResize|stateAlwaysVisible" />
+        <activity android:name=".ActivityRemoteMain" android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar" android:windowSoftInputMode="adjustResize|stateAlwaysHidden" >
 		    <intent-filter android:label="Send to TV" > 
 				<action android:name="android.intent.action.VIEW" />
 				<action android:name="android.intent.action.SEND" />
@@ -41,7 +43,7 @@
 		    </intent-filter>
 		</activity>
 		<activity android:name=".ActivityBrowser" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
-        		  android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+        		  android:theme="@android:style/Theme.NoTitleBar" >
 			<intent-filter android:label="View on TV">
             	<action android:name="android.intent.action.VIEW" />
             	<action android:name="android.intent.action.SEND" />
@@ -62,7 +64,10 @@
         </receiver>
                
 		<!-- These are for the factory test -->
-		<activity android:name=".ActivityFactoryTest1" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />	
+		<activity android:name=".ActivityFactoryTest1" 
+				android:screenOrientation="portrait" 
+				android:theme="@android:style/Theme.NoTitleBar" 
+				android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />	
 	            
   	</application>
   	
@@ -70,6 +75,7 @@
   	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
   	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
   	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+  	<uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
   	<uses-permission android:name="android.permission.VIBRATE" />
   	<uses-permission android:name="android.permission.RECEIVE_SMS" />
   	

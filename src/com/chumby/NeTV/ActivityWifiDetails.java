@@ -40,7 +40,7 @@ public class ActivityWifiDetails extends ActivityBaseNeTV implements OnItemSelec
     {  
 		Log.d(TAG, this.getLocalClassName() + " onCreate()");
     	super.onCreate(savedInstanceState);
-		setContentView(R.layout.wifi_details);
+		setContentView(R.layout.activity_wifi_details);
 		
 		//spinner
 		spinnerEncryption = (Spinner)findViewById(R.id.spinnerEncryption);

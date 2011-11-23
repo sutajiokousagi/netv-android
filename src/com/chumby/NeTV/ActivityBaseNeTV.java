@@ -13,6 +13,8 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.Toast;
 
 public abstract class ActivityBaseNeTV extends Activity implements CustomEventReceiverInterface
@@ -22,9 +24,7 @@ public abstract class ActivityBaseNeTV extends Activity implements CustomEventRe
 	//Debug flags (all in one place)
 	protected boolean SUPER_VERBOSE = true;					//universal
 	protected boolean ENABLE_SOUND_FX = false;				//universal
-	protected boolean ENABLE_CURSOR = false;				//ActivityRemoteMain
-	protected boolean ENABLE_SCREENSHOT = false;			//ActivityRemoteMain
-	protected boolean ENABLE_REMOTE_BUTTONS = true;			//ActivityRemoteMain
+	protected boolean ENABLE_TEXT_INPUT = false;			//ActivityRemoteMain
 	protected boolean ENABLE_AUTO_SELECT_AP = false;		//ActivitySplash
 	protected boolean ALLOW_UNACTIVATED_REMOTE = false;		//ActivitySplash
 	protected int NETWORK_CONFIG_WAIT_SECONDS = 60;			//ActivityActivation
@@ -322,6 +322,17 @@ public abstract class ActivityBaseNeTV extends Activity implements CustomEventRe
 	{
     	if (_busyDialog != null && _busyDialog.isShowing())
 			_busyDialog.dismiss();
+	}
+	
+	/**
+	 * Hide soft keyboard
+	 * 
+	 * @category UI Utility
+	 */
+	protected void hideKeyboard(EditText editText)
+	{
+		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
 	}
 	
 	/**

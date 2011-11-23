@@ -49,6 +49,7 @@ public class MessageReceiver extends BroadcastReceiver
 	public static final String COMMAND_TickerEvent = "TickerEvent";
 	public static final String COMMAND_ControlPanel = "ControlPanel";
 	public static final String COMMAND_JavaScript = "JavaScript";
+	public static final String COMMAND_TextInput = "TextInput";
 	
 	public static final String COMMAND_CancelActivation = "CancelActivation";
 	public static final String COMMAND_STATUS = "GetActivationStatus";

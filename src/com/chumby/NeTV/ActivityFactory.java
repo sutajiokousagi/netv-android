@@ -44,7 +44,7 @@ public class ActivityFactory extends ActivityBaseNeTV
     {
     	Log.d(TAG, this.getLocalClassName() + " onCreate()");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.activity_splash);
     }
     
 	/**

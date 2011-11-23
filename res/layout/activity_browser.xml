@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    
+    <!-- Background -->
+        
+    <ImageView
+    		android:layout_height="fill_parent"
+    		android:layout_width="fill_parent"
+    		android:scaleType="centerCrop"
+    		android:src="@drawable/device_list_bg"
+    		android:layout_centerHorizontal="true"
+    		android:layout_centerVertical="true"
+    		/>
+    		
+	<!-- Webview -->
+       
+	<WebView android:id="@+id/webView1"
+			android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        android:layout_below="@+id/addrBarBg"
+	        android:layout_above="@+id/bottomRow"
+	        android:layout_marginTop="-5dp" />
+    		
+	<!-- Address bar -->
+    		
+	<ImageView
+			android:id="@+id/addrBarBg"
+    		android:layout_height="wrap_content"
+    		android:layout_width="fill_parent"
+    		android:src="@drawable/address_bar"
+    		android:layout_alignParentTop="true"
+    		android:layout_marginTop="38dp"
+    		android:scaleType="fitXY" />   		
+
+    <EditText android:text="www.chumby.com"
+			android:id="@+id/textViewUrl"
+     		android:layout_width="fill_parent"
+     		android:layout_height="42sp"
+     		android:layout_marginLeft="5sp"
+     		android:layout_marginRight="5sp"
+		    android:layout_toLeftOf="@+id/btn_go"
+     		android:textSize="20sp"
+		    android:singleLine="true"
+		    android:imeOptions="actionGo"
+		    android:background="@android:color/transparent"
+		    android:layout_alignTop="@+id/addrBarBg"
+    		android:layout_alignBottom="@+id/addrBarBg"
+		    />   
+
+	<!-- Navbar & back button & spinning icon -->
+    	    
+    <ImageView
+    		android:id="@+id/navbar"
+    		android:layout_height="wrap_content"
+    		android:layout_width="fill_parent"
+    		android:scaleType="centerCrop"
+    		android:src="@drawable/navbar_bg"
+    		android:layout_centerHorizontal="true"
+    		android:layout_alignParentTop="true"
+    		/>
+    		    	
+    <ImageView
+    		android:id="@+id/btn_back"
+    		android:layout_height="wrap_content"
+    		android:layout_width="wrap_content"
+    		android:scaleType="centerCrop"
+    		android:src="@drawable/navbar_back"
+    		android:layout_alignParentLeft="true"
+    		android:layout_alignParentTop="true"
+    		/>
+    		
+    <ImageView
+    		android:id="@+id/loading_icon"
+    		android:layout_height="wrap_content"
+    		android:layout_width="wrap_content"
+    		android:scaleType="centerCrop"
+    		android:src="@drawable/loading_icon"
+    		android:layout_alignParentRight="true"
+    		android:layout_alignParentTop="true"
+    		android:visibility="invisible"
+    		/>
+
+	<!-- Toolbar -->
+	
+	<ImageView
+    		android:id="@+id/btn_previous"
+    		android:layout_height="wrap_content"
+    		android:layout_width="fill_parent"
+    		android:scaleType="centerCrop"
+    		android:src="@drawable/bottombar"
+    		android:layout_alignParentBottom="true"
+    		/>
+
+	<TextView
+    		android:text="controlling 192.168.1.123"
+    		android:id="@+id/textViewRemoteTitle"
+    		android:layout_width="fill_parent"
+    		android:gravity="center"
+    		android:textSize="14sp"
+		    android:textColor="#000000"
+		    android:layout_alignParentBottom="true"
+    		android:layout_height="37dp"/>
+	    		
+	<ImageView
+    		android:id="@+id/btn_backward"
+    		android:layout_height="wrap_content"
+    		android:layout_width="wrap_content"
+    		android:scaleType="centerCrop"
+    		android:src="@drawable/btn_backward"
+    		android:layout_alignParentLeft="true"
+    		android:layout_alignParentBottom="true"
+    		/>
+    		
+    <ImageView
+    		android:id="@+id/btn_forward"
+    		android:layout_height="wrap_content"
+    		android:layout_width="wrap_content"
+    		android:scaleType="centerCrop"
+    		android:src="@drawable/btn_forward"
+    		android:layout_alignParentRight="true"
+    		android:layout_alignParentBottom="true"
+    		android:visibility="invisible"
+    		/>
+   	
+</RelativeLayout>

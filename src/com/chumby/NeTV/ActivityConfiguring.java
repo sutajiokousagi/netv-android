@@ -87,7 +87,7 @@ public class ActivityConfiguring extends ActivityBaseNeTV
 	{
 		Log.d(TAG, this.getLocalClassName() + " onCreate()");
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.configuring);
+		setContentView(R.layout.activity_configuring);
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class ActivityConfiguring extends ActivityBaseNeTV
 		_deviceList.clear();
 
 		// Setup UI
-		statusTextView = (TextView) findViewById(R.id.txtActivationStatus2);
+		statusTextView = (TextView) findViewById(R.id.txtActivationStatus);
 		
 		_myApp.sendNeTVBrowserJavaScript("function android_timeout() { fDbg2('New timeout. Do nothing.');	}");
 		_myApp.sendNeTVBrowserJavaScript("function android_timeout() { fDbg2('New timeout. Do nothing.');	}");

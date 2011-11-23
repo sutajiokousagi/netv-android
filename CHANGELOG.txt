@@ -1,5 +1,18 @@
-TODO:
-Make sure WEP also works on Android
+0.6.8
+Migrate to new graphics from iOS version
+
+0.6.7
+Send UDP messages immediately instead of queuing
+Switch to Multicast socket in order to receive TextInput event from NeTVServer
+Add ActivityTextInput (experimental)
+Add MulticastLock for HTC devices to work
+
+0.6.6
+Changes to Multitab commands affecting fwver 20 & 406 onwards
+
+0.6.5
+Add a Refresh button on device list dialog
+Make sure WEP 5 or 13 characters WEP keys also work on Android
 
 0.6.4
 Tested for Release Firmware 14

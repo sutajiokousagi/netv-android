@@ -38,7 +38,8 @@ public class CommService extends Service
 	public static final String NEW_MESSAGE = "com.chumby.NeTV.new_message";
 		
 	private static final int BUFFER_SIZE = 2048;
-	private static final boolean USE_MULTICAST = false;	 //needs CHANGE_WIFI_MULTICAST_STATE permission
+	private static final boolean USE_MULTICAST = true;		//needs CHANGE_WIFI_MULTICAST_STATE permission
+	private static final boolean TX_QUEUE = false;			//use transmit message queue instead of sending directly
 	
 	private int 						_port;
 	private String 						_myIP; 
@@ -86,7 +87,8 @@ public class CommService extends Service
 		
 		try
 		{
-			_broadcastAddress = USE_MULTICAST ? InetAddress.getByName(MULTICAST_GROUP) : getBroadcastAddress();
+			//_broadcastAddress = USE_MULTICAST ? InetAddress.getByName(MULTICAST_GROUP) : getBroadcastAddress();
+			_broadcastAddress = getBroadcastAddress();
 		}
 		catch(IOException e)
 		{
@@ -106,21 +108,18 @@ public class CommService extends Service
 		{
 			_mySocket = USE_MULTICAST ? new MulticastSocket(_port) : new DatagramSocket(_port);
 			_mySocket.setSoTimeout(100);
+			_mySocket.setBroadcast(true);
+			_mySocket.setReuseAddress(true);
 			
 			if (USE_MULTICAST)
 			{
-				((MulticastSocket)_mySocket).joinGroup(_broadcastAddress);
+				((MulticastSocket)_mySocket).joinGroup( InetAddress.getByName(MULTICAST_GROUP) );
+				Log.d(TAG, "CommService: created, using multicast mode (" + MULTICAST_GROUP + ")");
 			}
 			else
 			{
-				_mySocket.setBroadcast(true);
-				_mySocket.setReuseAddress(true);
+				Log.d(TAG, "CommService: created, using broadcast mode");
 			}
-			
-			if (USE_MULTICAST)
-				Log.d(TAG, "CommService: created, using multicast mode (" + _broadcastAddress.toString() + ")");
-			else
-				Log.d(TAG, "CommService: created, using broadcast mode");			
 		}
 		catch(Exception e)
 		{
@@ -144,8 +143,8 @@ public class CommService extends Service
 			Iterator<String> iterator = pendingPackages.iterator();
 			while(iterator.hasNext())
 			{
-				if (extraAddress != null)		queueMessage(iterator.next().toString(), extraAddress);
-				else							queueMessage(iterator.next().toString(), null);
+				if (extraAddress != null)		sendMessage(iterator.next().toString(), extraAddress);
+				else							sendMessage(iterator.next().toString(), null);
 			}
 		}
 		
@@ -273,9 +272,9 @@ public class CommService extends Service
             receivedData = false;
             try
             {
-            	if (USE_MULTICAST)
-            		((MulticastSocket)_mySocket).receive(packet);
-            	else
+            	//if (USE_MULTICAST)
+            	//	((MulticastSocket)_mySocket).receive(packet);
+            	//else
             		_mySocket.receive(packet);
                 receivedData = true; 
             }
@@ -314,28 +313,31 @@ public class CommService extends Service
             }
             
             //Send packets in queue
-            tempCounter = 0;
-            while (_transmitQueue.size() > 0 && !_bServiceStopping)
+            if (TX_QUEUE)
             {
-            	DatagramPacket tempPacket = null;
-            	synchronized (_transmitQueue) {
-            		tempPacket = _transmitQueue.removeFirst();
-				}
-            	if (tempPacket == null) {
-            		Log.d(TAG, "Unable to get lock on _transmitQueue");
-            		break;
-            	}
-            	
-            	try
-                {
-            		_mySocket.send(tempPacket);
-            		tempCounter++;
-                }
-                catch (IOException e)
-                {
-                	//This error occurs when we switch between networks. Safe to ignore
-                	//Log.d(TAG, "Socket IOException (Sending)");
-                }
+                tempCounter = 0;
+	            while (_transmitQueue.size() > 0 && !_bServiceStopping)
+	            {
+	            	DatagramPacket tempPacket = null;
+	            	synchronized (_transmitQueue) {
+	            		tempPacket = _transmitQueue.removeFirst();
+					}
+	            	if (tempPacket == null) {
+	            		Log.d(TAG, "Unable to get lock on _transmitQueue");
+	            		break;
+	            	}
+	            	
+	            	try
+	                {
+	            		_mySocket.send(tempPacket);
+	            		tempCounter++;
+	                }
+	                catch (IOException e)
+	                {
+	                	//This error occurs when we switch between networks. Safe to ignore
+	                	//Log.d(TAG, "Socket IOException (Sending)");
+	                }
+	            }
             }
             
             //If this was started by a BroadcastReceiver (widget), we stop here
@@ -397,18 +399,19 @@ public class CommService extends Service
 	    return null;
 	}
 	
+	
 	/**
-     * Add a String message to transmit queue
+     * Send a String message directly
      */
-	public boolean queueMessage(String message, String address)
+	public boolean sendMessage(String message, String address)
 	{
-		return queueMessage(message.getBytes(), message.length(), address);
+		return sendMessage(message.getBytes(), message.length(), address);
 	}
 	
 	/**
-     * Add a byte[] message to transmit queue
+     * Send a byte[] message directly
      */
-	public boolean queueMessage(byte[] data, int length, String address)
+	public boolean sendMessage(byte[] data, int length, String address)
 	{
 		if (data == null || length <= 0)
 			return false;
@@ -416,7 +419,8 @@ public class CommService extends Service
 		//Refresh the broadcast address every time
 		try
 		{
-			_broadcastAddress = USE_MULTICAST ? InetAddress.getByName(MULTICAST_GROUP) : getBroadcastAddress();
+			//_broadcastAddress = USE_MULTICAST ? InetAddress.getByName(MULTICAST_GROUP) : getBroadcastAddress();
+			_broadcastAddress = getBroadcastAddress();
 		}
 		catch(IOException e)
 		{
@@ -439,9 +443,23 @@ public class CommService extends Service
 		
 		DatagramPacket tempPacket = new DatagramPacket(data, length, inetaddr, _port);
 		
-		//Mutex
-		synchronized (_transmitQueue) {
-			_transmitQueue.addLast(tempPacket);
+		if (TX_QUEUE)
+		{
+			//Mutex
+			synchronized (_transmitQueue) {
+				_transmitQueue.addLast(tempPacket);
+			}
+		}
+		else
+		{
+			try
+	        {
+	    		_mySocket.send(tempPacket);
+	        }
+	        catch (IOException e)
+	        {
+	        	return false;
+	        }
 		}
 		
 		return true;

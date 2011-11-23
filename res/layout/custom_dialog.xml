@@ -45,13 +45,23 @@
         android:layout_height="wrap_content">
             
     	<ListView
-		android:id="@+id/listview"
-		android:padding="6dip"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:divider="#FFFFFF"
-        android:dividerHeight="0dip" />
-		
+			android:id="@+id/listview"
+			android:padding="6dip"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:divider="#FFFFFF"
+	        android:dividerHeight="0dip" />
+        
+        <Button
+	        android:id="@+id/btn_refresh"
+	        android:text="@string/button_refresh"
+	        android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:padding="6dip"
+			android:background="@drawable/dev_btn_selector"
+			style="@style/DialogText.Title"	/>
+			
     </LinearLayout>
     
 </LinearLayout>

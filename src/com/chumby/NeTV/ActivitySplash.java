@@ -13,22 +13,27 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
+import android.view.animation.RotateAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class ActivitySplash extends ActivityBaseNeTV implements OnItemClickListener, OnKeyListener
+public class ActivitySplash extends ActivityBaseNeTV implements OnItemClickListener, OnKeyListener, OnClickListener
 {
 	//UI
 	TextView statusTextView;
 	TextView _warningTextView;
-	AlertDialog promptCheckNeTVDialog;
+	AlertDialog _promptCheckNeTVDialog;
+	ImageView _loadingIcon;
+	ImageView _btnBack;
 		
 	//Flag
 	int _retryCounter;
@@ -54,7 +59,7 @@ public class ActivitySplash extends ActivityBaseNeTV implements OnItemClickListe
     {
     	Log.d(TAG, this.getLocalClassName() + " onCreate()");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.activity_splash);
         
         _hotspotOn = false;
     }
@@ -78,6 +83,12 @@ public class ActivitySplash extends ActivityBaseNeTV implements OnItemClickListe
     	statusTextView = (TextView)findViewById(R.id.textViewStatus);
     	statusTextView.setText(this.getString(isRooted ? R.string.rooted_true : R.string.rooted_false));
     	
+    	_loadingIcon = (ImageView)findViewById(R.id.loading_icon);
+    	//_loadingIcon.setAlpha(0);
+    	
+    	_btnBack = (ImageView)findViewById(R.id.btn_back);
+    	_btnBack.setAlpha(0);
+    	
     	reset();
     	
     	//Animate the chumby logo
@@ -97,6 +108,13 @@ public class ActivitySplash extends ActivityBaseNeTV implements OnItemClickListe
     	animation.setDuration(1000);
     	set.addAnimation(animation);
     	((TextView)findViewById(R.id.textViewVersion)).startAnimation(animation);
+    	
+    	//Spin the loading icon
+    	animation = new RotateAnimation (0.0f, 359.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+    	animation.setRepeatCount(Animation.INFINITE);
+    	animation.setDuration(2000);
+    	animation.setInterpolator(new Interpolator() { public float getInterpolation(float arg0) { return arg0; } });
+    	_loadingIcon.startAnimation(animation);
     }
     
     /**
@@ -130,9 +148,9 @@ public class ActivitySplash extends ActivityBaseNeTV implements OnItemClickListe
     		_deviceListDialog.dismiss();
     	_deviceListDialog = null;
     	
-    	if (promptCheckNeTVDialog != null)
-    		promptCheckNeTVDialog.dismiss();
-    	promptCheckNeTVDialog = null;
+    	if (_promptCheckNeTVDialog != null)
+    		_promptCheckNeTVDialog.dismiss();
+    	_promptCheckNeTVDialog = null;
     	    	
     	if (_deviceList == null)
     		_deviceList = new HashMap<String, Bundle>();
@@ -161,10 +179,12 @@ public class ActivitySplash extends ActivityBaseNeTV implements OnItemClickListe
     		_hotspotOn = false;
 			initializeSequence();
 			
+			fadeLoadingIcon(true);
+			
 	    	//refresh AP list
 			_myApp.startScan();
     	}
-    	
+    	    	
 		Log.i(TAG, this.getLocalClassName() + ": hotspot mode = " + _hotspotOn);
     }
     
@@ -198,6 +218,13 @@ public class ActivitySplash extends ActivityBaseNeTV implements OnItemClickListe
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public void onClick(View v)
+	{
+		if (v.getId() == R.id.btn_refresh)
+			reset();
 	}
 	
     // UI Utility functions
@@ -335,10 +362,28 @@ public class ActivitySplash extends ActivityBaseNeTV implements OnItemClickListe
 		           }
 		       });
 		
-		promptCheckNeTVDialog = builder.create();
-		promptCheckNeTVDialog.getWindow().getAttributes().windowAnimations = R.style.CustomDialogAnimation;
-		promptCheckNeTVDialog.show();
+		_promptCheckNeTVDialog = builder.create();
+		_promptCheckNeTVDialog.getWindow().getAttributes().windowAnimations = R.style.CustomDialogAnimation;
+		_promptCheckNeTVDialog.show();
 	}
+    
+    /**
+     * Fade in/out the spining loading icon
+     * 
+     * @category UI Utility
+     */
+    private void fadeLoadingIcon(boolean isIn)
+    {
+    	if (isIn)		_loadingIcon.setVisibility(View.VISIBLE);
+    	else			_loadingIcon.setVisibility(View.INVISIBLE);
+    	/*
+    	Animation animation;
+    	if (isIn)	animation = new AlphaAnimation(0, 1);
+    	else		animation = new AlphaAnimation(1, 0);
+		animation.setDuration(500);
+		_loadingIcon.startAnimation(animation);
+		*/
+    }
     
     /**
      * Popup a modal dialog box to ask user to select one NeTV to control 
@@ -347,6 +392,8 @@ public class ActivitySplash extends ActivityBaseNeTV implements OnItemClickListe
      */
     private void showDeviceListDialog()
     {
+    	fadeLoadingIcon(false);
+    	
     	//Data list for the dialog
     	if (deviceListForUI != null)
     		deviceListForUI.clear();
@@ -384,6 +431,7 @@ public class ActivitySplash extends ActivityBaseNeTV implements OnItemClickListe
     	    		}
     		customBuilder.setTitle(this.getString(R.string.factory_test_mode));
     		customBuilder.setMessage(this.getString(R.string.select_a_device_test));
+    		customBuilder.setOnClickListener(this);
     	}
     	else
     	{
@@ -399,6 +447,7 @@ public class ActivitySplash extends ActivityBaseNeTV implements OnItemClickListe
 	    	}
 			customBuilder.setTitle(this.getString(R.string.select_a_device));
 			customBuilder.setMessage(this.getString(R.string.multiple_device_found));
+			customBuilder.setOnClickListener(this);
     	}
 
     	//Construct the dialog view
@@ -524,6 +573,8 @@ public class ActivitySplash extends ActivityBaseNeTV implements OnItemClickListe
 			//Ignore message from another Android device (doesn't contain GUID and DCID)
 			if (!parameters.containsKey(AppNeTV.PREF_CHUMBY_GUID) && !parameters.containsKey(AppNeTV.PREF_CHUMBY_DCID) )
 				return;
+			if (_deviceList.containsKey(addressString))
+				return;
 			
 			//Compare version
 			String minAndroid = (String) parameters.get(MessageReceiver.MESSAGE_KEY_MIN_ANDROID);
@@ -546,7 +597,6 @@ public class ActivitySplash extends ActivityBaseNeTV implements OnItemClickListe
 		
 			if (SUPER_VERBOSE)
 				statusTextView.setText("" + _deviceList.size() + " device(s) found");
-			Log.d(TAG, "Received handshake reply from " + addressString);
 			
 			//Print out parameters for debug
 			/*
@@ -656,7 +706,7 @@ public class ActivitySplash extends ActivityBaseNeTV implements OnItemClickListe
 		if (!_myApp.isWifiEnabled())
 		{
 			if (SUPER_VERBOSE)
-				statusTextView.setText("Enabling WiFi...");
+				statusTextView.setText("Turning on WiFi...");
 			_myApp.setWifiEnabled(true);
 			Log.d(TAG, this.getLocalClassName() + ": enabling WiFi...");
 			_handler.postDelayed(initializeSequenceRunnable, 5000);
@@ -682,37 +732,21 @@ public class ActivitySplash extends ActivityBaseNeTV implements OnItemClickListe
 		{
 			if (SUPER_VERBOSE)
 				statusTextView.setText("Searching for NeTV...");
-			
+
+			//blasting handshake messages
+			_myApp.sendHandshake();
+			_myApp.sendHandshake();
+			_myApp.sendHandshake();
+			Log.d(TAG, this.getLocalClassName() + ": broadcasting handshake message");
+		
+			//Send to a particular address
 			String _manual_ipaddress = getPreferenceString(AppNeTV.PREF_CHUMBY_IP_MANUAL, "");
-			if (_retryCounter < 2)
-			{				
-				//blasting handshake messages
-				_myApp.sendHandshake();
-				if (_retryCounter == 1 && _manual_ipaddress.length() <= 6)	_retryCounter+=3;
-				else														_retryCounter++;
-				_handler.postDelayed(initializeSequenceRunnable, 200);
-				Log.d(TAG, this.getLocalClassName() + ": broadcasting handshake message");
-			}
-			else if (_retryCounter < 4)
-			{
-				_retryCounter++;
-				//Specifically send to pre-configured manual IP too
-				
-				if (_manual_ipaddress.length() > 6) {
-					_myApp.sendHandshake(_manual_ipaddress);
-					_handler.postDelayed(initializeSequenceRunnable, 200);
-					Log.d(TAG, this.getLocalClassName() + ": broadcasting handshake message (manual)");
-				}
-				else {			
-					_handler.postDelayed(initializeSequenceRunnable, 100);
-				}
-			}
-			else
-			{
-				_sentHandshake = true;
-				_retryCounter = 0;
-				_handler.postDelayed(initializeSequenceRunnable, 600);
-			}			
+			if (_manual_ipaddress.length() >= 7)
+				_myApp.sendHandshake(_manual_ipaddress);
+			
+			_sentHandshake = true;
+			_retryCounter = 0;
+			_handler.postDelayed(initializeSequenceRunnable, 1500);
 			return;
 		}
 				
@@ -738,10 +772,10 @@ public class ActivitySplash extends ActivityBaseNeTV implements OnItemClickListe
 		if (_myApp.isNeTVinRange())
 		{
 			//Hide the current prompt (if any)
-			if (promptCheckNeTVDialog != null)
+			if (_promptCheckNeTVDialog != null)
 			{
-				promptCheckNeTVDialog.dismiss();
-				promptCheckNeTVDialog = null;
+				_promptCheckNeTVDialog.dismiss();
+				_promptCheckNeTVDialog = null;
 			}
 			
 			//Automatically go to network configuration
@@ -777,10 +811,10 @@ public class ActivitySplash extends ActivityBaseNeTV implements OnItemClickListe
 		if (_receivedHandshake)
 		{
 			//Hide the current prompt (if any)
-			if (promptCheckNeTVDialog != null)
+			if (_promptCheckNeTVDialog != null)
 			{
-				promptCheckNeTVDialog.dismiss();
-				promptCheckNeTVDialog = null;
+				_promptCheckNeTVDialog.dismiss();
+				_promptCheckNeTVDialog = null;
 			}
 			
 			//Only 1 device is found
@@ -857,4 +891,6 @@ public class ActivitySplash extends ActivityBaseNeTV implements OnItemClickListe
         	initializeSequence();
         } 
     };
+
+	
 }

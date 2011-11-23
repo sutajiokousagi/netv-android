@@ -2,12 +2,9 @@ package com.chumby.NeTV;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.HashMap;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.Matrix;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.net.Uri;
@@ -18,16 +15,13 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,7 +30,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-public class ActivityRemoteMain extends ActivityBaseNeTV implements OnClickListener, OnTouchListener, AsyncImageLoader.AsyncImageCallback
+public class ActivityRemoteMain extends ActivityBaseNeTV implements OnClickListener
 {
 	// Screen resolution;
 	DisplayMetrics _displayMetrics;
@@ -44,21 +38,8 @@ public class ActivityRemoteMain extends ActivityBaseNeTV implements OnClickListe
 	int _screenHeight;
 
 	// UI
-	Matrix _imgViewMatrix;
-	ImageView _imgView;
-	CheckBox _chkCursorMode;
 	TextView _statusTextView;
 	TextView _warningTextView;
-
-	// Cursor relative mode
-	boolean _isRelative;
-	float _previousX;
-	float _previousY;
-
-	// Asynchronous image loader
-	AsyncImageLoader _imageLoader;
-	Bitmap _screenshotImage;
-	String _screenshotPath = "http://xxxxxxxxxx/framebuffer";
 
 	// Flags
 	String _ipaddress;
@@ -130,7 +111,7 @@ public class ActivityRemoteMain extends ActivityBaseNeTV implements OnClickListe
 	{
 		Log.d(TAG, "ActivityRemoteMain onCreate()");
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.remote_main);
+		setContentView(R.layout.activity_remote);
 		
 		//Version check
 		_warningTextView = (TextView)findViewById(R.id.textViewVersionWarning);
@@ -155,40 +136,8 @@ public class ActivityRemoteMain extends ActivityBaseNeTV implements OnClickListe
 		getWindowManager().getDefaultDisplay().getMetrics(_displayMetrics);
 		_screenWidth = _displayMetrics.widthPixels;
 		_screenHeight = _displayMetrics.heightPixels;
-
-		_imgViewMatrix = null;
-		_imgView = (ImageView) findViewById(R.id.remote_background);
-		_imgView.setOnTouchListener(this);
-
-		// Set screenshot image size
-		if (ENABLE_SCREENSHOT)
-		{
-			/*
-			 * Log.d(TAG, "Setting image size..."); HashMap<String,String>
-			 * resMsg = new HashMap<String,String>();
-			 * resMsg.put(MessageReceiver.COMMAND_MESSAGE,
-			 * MessageReceiver.COMMAND_SetScreenshotResolution); resMsg.put("w",
-			 * "" + _screenHeight/2); resMsg.put("h", "" + _screenWidth/2);
-			 * queueMessage(resMsg);
-			 * 
-			 * //Request for screenshot path Log.d(TAG,
-			 * "Requesting for screenshot path..."); HashMap<String,String>
-			 * ssmsg = new HashMap<String,String>();
-			 * ssmsg.put(MessageReceiver.COMMAND_MESSAGE,
-			 * MessageReceiver.COMMAND_GetScreenshotPath); queueMessage(ssmsg);
-			 */
-		}
 		
 		reset();
-
-		// Update default cursor mode
-		_chkCursorMode = (CheckBox) this.findViewById(R.id.chkCursorMode);
-		_chkCursorMode.setVisibility(ENABLE_CURSOR ? 0 : -1);
-		if (ENABLE_CURSOR) {
-			_chkCursorMode.setOnClickListener(this);
-			_isRelative = _chkCursorMode.isChecked();
-			onClick(_chkCursorMode);
-		}
 		
 		// if initiated from a share http:// link event (file manager apps)
 		String url = getIntent().getDataString();
@@ -215,31 +164,15 @@ public class ActivityRemoteMain extends ActivityBaseNeTV implements OnClickListe
 		else							pendingMIMEType = "";
 		
 		// Remote control buttons
-		((Button) this.findViewById(R.id.btn_controlpanel))
-				.setVisibility(ENABLE_REMOTE_BUTTONS ? 0 : -1);
-		((Button) this.findViewById(R.id.btn_widget))
-				.setVisibility(ENABLE_REMOTE_BUTTONS ? 0 : -1);
-		((Button) this.findViewById(R.id.btn_up))
-				.setVisibility(ENABLE_REMOTE_BUTTONS ? 0 : -1);
-		((Button) this.findViewById(R.id.btn_down))
-				.setVisibility(ENABLE_REMOTE_BUTTONS ? 0 : -1);
-		((Button) this.findViewById(R.id.btn_left))
-				.setVisibility(ENABLE_REMOTE_BUTTONS ? 0 : -1);
-		((Button) this.findViewById(R.id.btn_right))
-				.setVisibility(ENABLE_REMOTE_BUTTONS ? 0 : -1);
-		((Button) this.findViewById(R.id.btn_center))
-				.setVisibility(ENABLE_REMOTE_BUTTONS ? 0 : -1);
-		if (ENABLE_REMOTE_BUTTONS)
-		{
-			((Button) this.findViewById(R.id.btn_controlpanel)).setOnClickListener(this);
-			((Button) this.findViewById(R.id.btn_widget)).setOnClickListener(this);
-			((Button) this.findViewById(R.id.btn_up)).setOnClickListener(this);
-			((Button) this.findViewById(R.id.btn_down)).setOnClickListener(this);
-			((Button) this.findViewById(R.id.btn_left)).setOnClickListener(this);
-			((Button) this.findViewById(R.id.btn_right)).setOnClickListener(this);
-			((Button) this.findViewById(R.id.btn_center)).setOnClickListener(this);
-			((Button) this.findViewById(R.id.btn_browser)).setOnClickListener(this);
-		}
+		((Button) this.findViewById(R.id.btn_controlpanel)).setOnClickListener(this);
+		((Button) this.findViewById(R.id.btn_widget)).setOnClickListener(this);
+		((Button) this.findViewById(R.id.btn_up)).setOnClickListener(this);
+		((Button) this.findViewById(R.id.btn_down)).setOnClickListener(this);
+		((Button) this.findViewById(R.id.btn_left)).setOnClickListener(this);
+		((Button) this.findViewById(R.id.btn_right)).setOnClickListener(this);
+		((Button) this.findViewById(R.id.btn_center)).setOnClickListener(this);
+		((Button) this.findViewById(R.id.btn_brwsr)).setOnClickListener(this);
+		((ImageView) this.findViewById(R.id.btn_back)).setOnClickListener(this);
 	}
 
 	/**
@@ -284,16 +217,6 @@ public class ActivityRemoteMain extends ActivityBaseNeTV implements OnClickListe
 		updateNextStepUI();
 		updateHashVariables();
 
-		// Asynchronous image loader
-		if (ENABLE_SCREENSHOT) {
-			if (_ipaddress.length() <= 0)
-				_screenshotPath = "";
-			else
-				_screenshotPath = _screenshotPath.replace("xxxxxxxxxx",
-						_ipaddress);
-			_imageLoader = new AsyncImageLoader(_screenshotPath, this);
-		}
-
 		initializeSequence();
 
 		// Some fancy intro animation on the buttons
@@ -332,23 +255,23 @@ public class ActivityRemoteMain extends ActivityBaseNeTV implements OnClickListe
 
 		animation = new AlphaAnimation(0, 1);
 		animation.setDuration(durationAlpha);
+		button = (Button) findViewById(R.id.btn_center);
+		button.startAnimation(animation);
+		
+		animation = new AlphaAnimation(0, 1);
+		animation.setDuration(durationAlpha);
 		button = (Button) findViewById(R.id.btn_controlpanel);
+		button.startAnimation(animation);
+		
+		animation = new AlphaAnimation(0, 1);
+		animation.setDuration(durationAlpha);
+		button = (Button) findViewById(R.id.btn_brwsr);
 		button.startAnimation(animation);
 
 		animation = new AlphaAnimation(0, 1);
 		animation.setDuration(durationAlpha);
 		button = (Button) findViewById(R.id.btn_widget);
 		button.startAnimation(animation);
-
-		animation = new AlphaAnimation(0, 1);
-		animation.setDuration(durationAlpha);
-		button = (Button) findViewById(R.id.btn_center);
-		button.startAnimation(animation);
-
-		animation = new AlphaAnimation(0, 1);
-		animation.setDuration(durationAlpha * 3 / 4);
-		ImageView imagev = (ImageView) findViewById(R.id.remote_background);
-		imagev.startAnimation(animation);
 	}
 
 	/**
@@ -403,7 +326,8 @@ public class ActivityRemoteMain extends ActivityBaseNeTV implements OnClickListe
 	 * 
 	 * @category Initialization
 	 */
-	public void reset() {
+	public void reset()
+	{
 		_retryCounter = 0;
 		_triedConnectNeTV = false;
 
@@ -416,6 +340,24 @@ public class ActivityRemoteMain extends ActivityBaseNeTV implements OnClickListe
 		_pass_Upload = false;
 		_performed_Upload = false;
 		_shownPhoto = false;
+	}
+	
+	/**
+	 * Go back to previous activity depends on what we are doing
+	 * 
+	 * @category Initialization
+	 */
+	public boolean goBack()
+	{
+		// Return to browser/photo gallery/external app if we are coming from there
+		if (_doingCoolStuff) {
+			finish();
+			return false;
+		}
+
+		gotoNextActivity(ActivitySplash.class);
+		overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+		return true;
 	}
 
 	// UI Events
@@ -432,6 +374,7 @@ public class ActivityRemoteMain extends ActivityBaseNeTV implements OnClickListe
 		// Go back to Splash screen
 		if (keyCode == KeyEvent.KEYCODE_BACK)
 		{
+			/*
 			// Return to browser/photo gallery/external app if we are coming from there
 			if (_doingCoolStuff)
 				return super.onKeyDown(keyCode, event);
@@ -439,6 +382,8 @@ public class ActivityRemoteMain extends ActivityBaseNeTV implements OnClickListe
 			gotoNextActivity(ActivitySplash.class);
 			overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
 			return true;
+			*/
+			return goBack();
 		}
 
 		// Do not send special keys to NeTV
@@ -473,27 +418,6 @@ public class ActivityRemoteMain extends ActivityBaseNeTV implements OnClickListe
 	 */
 	public void onClick(View v)
 	{
-		if (ENABLE_CURSOR && v.getId() == R.id.chkCursorMode)
-		{
-			CheckBox chk = (CheckBox) v;
-			_isRelative = chk.isChecked();
-
-			HashMap<String, String> msg = new HashMap<String, String>();
-			msg.put(MessageReceiver.COMMAND_MESSAGE, "CursorMode");
-			if (_isRelative)
-				msg.put("value", "relative");
-			else
-				msg.put("value", "absolute");
-			_myApp.queueMessage(msg);
-
-			// Haptic
-			_vibrator.vibrate(150);
-		}
-		else if (!ENABLE_REMOTE_BUTTONS)
-		{
-			return;
-		}
-
 		if (v.getId() == R.id.btn_controlpanel)			_myApp.sendSimpleButton("cpanel");
 		else if (v.getId() == R.id.btn_widget)			_myApp.sendSimpleButton("widget");
 		else if (v.getId() == R.id.btn_up)				_myApp.sendSimpleButton("up");
@@ -501,7 +425,10 @@ public class ActivityRemoteMain extends ActivityBaseNeTV implements OnClickListe
 		else if (v.getId() == R.id.btn_left)			_myApp.sendSimpleButton("left");
 		else if (v.getId() == R.id.btn_right)			_myApp.sendSimpleButton("right");
 		else if (v.getId() == R.id.btn_center)			_myApp.sendSimpleButton("center");
-		else if (v.getId() == R.id.btn_browser)			onBrowserButton();
+		else if (v.getId() == R.id.btn_brwsr)			onBrowserButton();
+		else if (v.getId() == R.id.btn_back)			goBack();
+		
+		//Feedback
 		_vibrator.vibrate(120);
 
 		// Sound feedback
@@ -522,55 +449,6 @@ public class ActivityRemoteMain extends ActivityBaseNeTV implements OnClickListe
 		}
 	}
 
-	/**
-	 * Raw touch event
-	 * 
-	 * @category UI Events
-	 */
-	public boolean onTouch(View arg0, MotionEvent arg1) {
-		if (!ENABLE_CURSOR)
-			return false;
-
-		float y = 1.0f - arg1.getX() / _screenWidth;
-		float x = arg1.getY() / _screenHeight;
-
-		HashMap<String, String> msg = new HashMap<String, String>();
-
-		switch (arg1.getAction()) {
-		case MotionEvent.ACTION_DOWN:
-			// _imageLoader.reload();
-			_previousX = arg1.getX();
-			_previousY = arg1.getY();
-			Log.d(TAG, "onTouch Down: " + x + "," + y);
-			msg.put(MessageReceiver.COMMAND_MESSAGE, "CurDown");
-			msg.put("x", String.format("%.3f", x));
-			msg.put("y", String.format("%.3f", y));
-			_myApp.queueMessage(msg);
-			_vibrator.vibrate(100);
-			return true;
-
-		case MotionEvent.ACTION_MOVE:
-			if (_isRelative) {
-				y = -(arg1.getX() - _previousX) / _screenWidth / 2.0f;
-				x = (arg1.getY() - _previousY) / _screenHeight / 2.0f;
-				_previousX = arg1.getX();
-				_previousY = arg1.getY();
-			}
-			msg.put(MessageReceiver.COMMAND_MESSAGE, "CurMove");
-			msg.put("x", String.format("%.4f", x));
-			msg.put("y", String.format("%.4f", y));
-			_myApp.queueMessage(msg);
-			return true;
-
-		case MotionEvent.ACTION_UP:
-			msg.put(MessageReceiver.COMMAND_MESSAGE, "CurUp");
-			msg.put("x", String.format("%.3f", x));
-			msg.put("y", String.format("%.3f", y));
-			_myApp.queueMessage(msg);
-			return true;
-		}
-		return false;
-	}
 
 	/*
 	 * @category UI Events
@@ -611,8 +489,7 @@ public class ActivityRemoteMain extends ActivityBaseNeTV implements OnClickListe
 	protected void setStatusMessage(String text, String hexcolor) {
 		if (hexcolor == null)
 			hexcolor = "00b0f0";
-		_statusTextView.setText(Html.fromHtml("<font color='#" + hexcolor
-				+ "'>" + text + "</font>"));
+		_statusTextView.setText(Html.fromHtml("<font color='#" + hexcolor + "'>" + text + "</font>"));
 	}
 
 	// Utility
@@ -825,43 +702,6 @@ public class ActivityRemoteMain extends ActivityBaseNeTV implements OnClickListe
 		});
 	}
 
-	// Network
-	// ----------------------------------------------------------------------------
-
-	/**
-	 * @category Network
-	 */
-	public void onImageReceived(String url, Bitmap bm) {
-		if (bm == null) {
-			System.err.println("Could not load picture '" + url + "'!");
-			return;
-		}
-
-		// We cheated, let Android handle the transformation for us
-		_screenshotImage = bm;
-
-		// We are not currently in UI thread, we need to post it to UI thread
-		_handler.post(updateScreenshot);
-	}
-
-	private Runnable updateScreenshot = new Runnable() {
-		public void run() {
-			_imgView.setImageBitmap(_screenshotImage);
-
-			if (_imgViewMatrix == null) {
-				_imgViewMatrix = new Matrix();
-				float scaleX = (float) _screenWidth
-						/ _screenshotImage.getHeight();
-				float scaleY = (float) _screenHeight
-						/ _screenshotImage.getWidth();
-				_imgViewMatrix.postScale(scaleY, scaleX);
-				_imgViewMatrix.postRotate(90.0f);
-				_imgViewMatrix.postTranslate(_screenWidth, 0);
-
-				_imgView.setImageMatrix(_imgViewMatrix);
-			}
-		}
-	};
 
 	// Custom event
 	// ------------------------------------------------------------------
@@ -932,6 +772,26 @@ public class ActivityRemoteMain extends ActivityBaseNeTV implements OnClickListe
 			String value = (String)parameters.get(MessageReceiver.MESSAGE_KEY_VALUE);
 			if (value == null)			Log.d(TAG, "Received " + commandName);
 			else						Log.d(TAG, "Received " + commandName + ": " + value);
+			return;
+		}
+		else if (commandName.equals(MessageReceiver.COMMAND_TextInput.toUpperCase()))
+		{
+			String id = (String)parameters.get("id");
+			String value = (String)parameters.get(MessageReceiver.MESSAGE_KEY_VALUE);
+			if (id == null || id.length() <= 0)	{
+				Log.d(TAG, "Received " + commandName + ": (defocus)");
+				return;
+			}
+			
+			if (ENABLE_TEXT_INPUT) {
+				Log.d(TAG, "Received " + commandName + ": " + id + " -> " + value);			
+				gotoNextActivity(ActivityTextInput.class);
+			}
+			return;
+		}
+		else if (commandName.equals(MessageReceiver.COMMAND_Key.toUpperCase()))
+		{
+			//Ignore status message
 		}
 
 		Log.d(TAG, "Received command message: " + commandName);

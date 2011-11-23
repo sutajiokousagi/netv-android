@@ -1,8 +1,8 @@
 package com.chumby.NeTV;
 
-import com.loopj.android.http.AsyncHttpResponseHandler;
-
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Picture;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
@@ -14,11 +14,18 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.animation.Animation;
+import android.view.animation.Interpolator;
+import android.view.animation.RotateAnimation;
+import android.view.inputmethod.EditorInfo;
 import android.webkit.WebView;
+import android.webkit.WebView.PictureListener;
 import android.webkit.WebViewClient;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.loopj.android.http.AsyncHttpResponseHandler;
 
 public class ActivityBrowser extends ActivityBaseNeTV implements OnClickListener, OnTouchListener
 {	
@@ -29,9 +36,12 @@ public class ActivityBrowser extends ActivityBaseNeTV implements OnClickListener
 	
 	//UI
 	TextView			_statusTextView;
-	EditText			_urlTextView;
+	EditText			_urlTextEdit;
 	WebView				_webView;
 	MyWebViewClient		_myWebViewClient;
+	ImageView 			_loadingIcon;
+	ImageView			_btnForward;
+	ImageView			_btnBackward;
 			
 	//Flags
 	String 				_ipaddress;
@@ -84,6 +94,18 @@ public class ActivityBrowser extends ActivityBaseNeTV implements OnClickListener
 	        
 	        return true;
 	    }
+	    
+	    @Override
+	    public void onPageFinished(WebView view, String url)
+	    {
+	        _loadingIcon.setVisibility(View.INVISIBLE);
+	    }
+	    
+	    @Override
+	    public void onPageStarted(WebView view, String url, Bitmap favicon)
+	    {
+	        //_loadingIcon.setVisibility(View.VISIBLE);
+	    }
 	}
 	
 
@@ -101,7 +123,7 @@ public class ActivityBrowser extends ActivityBaseNeTV implements OnClickListener
     {
 		Log.d(TAG, "ActivityBrowser onCreate()");
     	super.onCreate(savedInstanceState);
-		setContentView(R.layout.browser);
+		setContentView(R.layout.activity_browser);
 		
     	reset();
     	
@@ -124,22 +146,61 @@ public class ActivityBrowser extends ActivityBaseNeTV implements OnClickListener
 	    _screenHeight = _displayMetrics.heightPixels;
 	    
 	    //UI
-	    //((Button)this.findViewById(R.id.btn_back)).setOnClickListener(this);
-    	((Button)this.findViewById(R.id.btn_go)).setOnClickListener(this);
+	    ((ImageView) this.findViewById(R.id.btn_back)).setOnClickListener(this);
+	    _loadingIcon = (ImageView)findViewById(R.id.loading_icon);
+    	_btnBackward = (ImageView)this.findViewById(R.id.btn_backward);
+    	_btnBackward.setOnClickListener(this);
+    	_btnBackward.setVisibility(View.INVISIBLE);
+    	_btnForward = (ImageView)this.findViewById(R.id.btn_forward);
+    	_btnForward.setOnClickListener(this);
+    	_btnForward.setVisibility(View.INVISIBLE);
     	_statusTextView = (TextView)findViewById(R.id.textViewRemoteTitle);
-    	_urlTextView = (EditText)findViewById(R.id.textViewUrl);
+    	_urlTextEdit = (EditText)findViewById(R.id.textViewUrl);
+    	
+    	//TextEdit
+    	_urlTextEdit.setOnEditorActionListener(new TextView.OnEditorActionListener(){
+    		public boolean onEditorAction(TextView exampleView, int actionId, KeyEvent event) {
+    			if(actionId == EditorInfo.IME_ACTION_GO){
+    				_retryCounter = 0;
+    				pendingUrl = _urlTextEdit.getText().toString().trim();
+    				initializeSequence();
+    				_loadingIcon.setVisibility(View.VISIBLE);
+    				hideKeyboard(_urlTextEdit);
+    			}
+    			return true;
+    		}
+    	});
 
     	//Webview
     	_myWebViewClient = new MyWebViewClient();
     	_webView = (WebView)findViewById(R.id.webView1);
     	_webView.getSettings().setJavaScriptEnabled(true);
     	_webView.setOnTouchListener(this);
-    	_webView.getSettings().setUserAgentString(" ");		//prevent loading mobile version
+    	_webView.getSettings().setUserAgentString("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.121 Safari/535.2");		//prevent loading mobile version
+    	_webView.getSettings().setBuiltInZoomControls(true);
     	//_webView.getSettings().setLoadWithOverviewMode(true);
-    	//_webView.getSettings().setUseWideViewPort(true);
+    	_webView.getSettings().setUseWideViewPort(true);
     	
     	_myWebViewClient = new MyWebViewClient();
     	_webView.setWebViewClient(_myWebViewClient);
+    	
+    	_webView.setPictureListener(new PictureListener() {
+    	    public void onNewPicture(WebView view, Picture arg1) {
+    	    	_loadingIcon.setVisibility(View.INVISIBLE);
+    	    	if (_webView.canGoBack())		_btnBackward.setVisibility(View.VISIBLE);
+    	    	else							_btnBackward.setVisibility(View.INVISIBLE);
+    	    	if (_webView.canGoForward())	_btnForward.setVisibility(View.VISIBLE);
+    	    	else							_btnForward.setVisibility(View.INVISIBLE);
+    	    }   
+    	});
+    	
+    	//Spin the loading icon
+    	Animation animation = new RotateAnimation (0.0f, 359.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+    	animation.setRepeatCount(Animation.INFINITE);
+    	animation.setDuration(2000);
+    	animation.setInterpolator(new Interpolator() { public float getInterpolation(float arg0) { return arg0; } });
+    	_loadingIcon.startAnimation(animation);
+    	_loadingIcon.setVisibility(View.INVISIBLE);
     }
     
 	/**
@@ -198,7 +259,7 @@ public class ActivityBrowser extends ActivityBaseNeTV implements OnClickListener
 		setPreferenceString(AppNeTV.PREF_PREVIOUS_ACTIVITY, ActivityBrowser.class.getName());
 		
 		//_myApp.sendMultiTabCommand("", "hide");
-		_myApp.MultiTabHTTP("", "hide", null);
+		_myApp.MultiTabHTTP("", "closeall", null);
 		Log.d(TAG, this.getLocalClassName() + ": return UI to default tab");
 		
 		reset();
@@ -281,8 +342,25 @@ public class ActivityBrowser extends ActivityBaseNeTV implements OnClickListener
 		if (v.getId() == R.id.btn_go)
 		{
 			_retryCounter = 0;
-			pendingUrl = _urlTextView.getText().toString().trim();
+			pendingUrl = _urlTextEdit.getText().toString().trim();
 			initializeSequence();
+			_loadingIcon.setVisibility(View.VISIBLE);
+			hideKeyboard(_urlTextEdit);
+			return;
+		}
+		else if (v.getId() == R.id.btn_back)
+		{
+			finish();
+			return;
+		}
+		else if (v.getId() == R.id.btn_backward)
+		{
+			_webView.goBack();
+			return;
+		}
+		else if (v.getId() == R.id.btn_forward)
+		{
+			_webView.goForward();
 			return;
 		}
 	}
@@ -311,8 +389,8 @@ public class ActivityBrowser extends ActivityBaseNeTV implements OnClickListener
 	 */
 	private void updateBrowserUrl(String newUrl)
 	{	
-		if (newUrl != null)										_urlTextView.setText(newUrl);
-		else													_urlTextView.setText("www.chumby.com");
+		if (newUrl != null)										_urlTextEdit.setText(newUrl);
+		else													_urlTextEdit.setText("www.chumby.com");
 	}
 
     // UI Utility functions
@@ -351,7 +429,7 @@ public class ActivityBrowser extends ActivityBaseNeTV implements OnClickListener
 			hexcolor = "00b0f0";
 		_statusTextView.setText(Html.fromHtml( "<font color='#" + hexcolor + "'>" + text + "</font>") );
 	}
-	
+		
 	// Custom event
     //------------------------------------------------------------------
     

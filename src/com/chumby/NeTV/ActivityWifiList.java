@@ -86,7 +86,7 @@ public class ActivityWifiList extends ActivityBaseNeTV implements
 	public void onCreate(Bundle savedInstanceState) {
 		Log.d(TAG, this.getLocalClassName() + " onCreate()");
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.wifi_list);
+		setContentView(R.layout.activity_wifi_list);
 
 		// Setup UI
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
