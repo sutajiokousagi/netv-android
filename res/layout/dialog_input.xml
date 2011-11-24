@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
+    android:layout_height="fill_parent" >
+    
 	<TextView 
 		android:id="@+id/txtEnterUrl"
 		android:text="@string/enter_a_url"
@@ -12,6 +11,7 @@
 	    android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:textColor="#00CCFF" android:textSize="18sp" android:textStyle="bold"/>
+	
 	<EditText
 		android:id="@+id/input_text"
 		android:layout_height="wrap_content"
@@ -19,6 +19,6 @@
 		android:layout_below="@+id/txtEnterUrl"
 		android:layout_alignParentBottom="true"
 		android:layout_centerHorizontal="true"
-		android:padding="5dip"
-			/>
+		android:padding="5dip" />
+	
 </RelativeLayout>

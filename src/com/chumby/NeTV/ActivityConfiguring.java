@@ -2,8 +2,6 @@ package com.chumby.NeTV;
 
 import java.util.HashMap;
 
-import com.loopj.android.http.AsyncHttpResponseHandler;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.media.MediaPlayer;
@@ -11,7 +9,13 @@ import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.animation.Animation;
+import android.view.animation.Interpolator;
+import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.loopj.android.http.AsyncHttpResponseHandler;
 
 public class ActivityConfiguring extends ActivityBaseNeTV
 {
@@ -117,6 +121,13 @@ public class ActivityConfiguring extends ActivityBaseNeTV
 
 		// Setup UI
 		statusTextView = (TextView) findViewById(R.id.txtActivationStatus);
+		
+    	//Spin the loading icon
+    	Animation animation = new RotateAnimation (0.0f, 359.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+    	animation.setRepeatCount(Animation.INFINITE);
+    	animation.setDuration(2000);
+    	animation.setInterpolator(new Interpolator() { public float getInterpolation(float arg0) { return arg0; } });
+    	((ImageView)findViewById(R.id.loading_icon)).startAnimation(animation);
 		
 		_myApp.sendNeTVBrowserJavaScript("function android_timeout() { fDbg2('New timeout. Do nothing.');	}");
 		_myApp.sendNeTVBrowserJavaScript("function android_timeout() { fDbg2('New timeout. Do nothing.');	}");

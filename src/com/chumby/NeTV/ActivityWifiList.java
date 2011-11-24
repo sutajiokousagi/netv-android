@@ -223,7 +223,7 @@ public class ActivityWifiList extends ActivityBaseNeTV implements OnClickListene
 
 		// UI
 		clearAllHighlight();
-		//v.setBackgroundColor(Color.rgb(0, 162, 232));
+		v.setBackgroundColor(Color.rgb(0, 162, 232));
 
 		_selectedSSID = item.getTitle();
 		_myApp.sendAndroidJSWifiSelect(_selectedSSID);
@@ -316,8 +316,8 @@ public class ActivityWifiList extends ActivityBaseNeTV implements OnClickListene
 			return;
 
 		// Highlight
-		if (_listViewWifi.getChildAt(idx - firstVisibleItem) != null)
-			_listViewWifi.getChildAt(idx - firstVisibleItem).setBackgroundColor(Color.rgb(0, 162, 232));
+		//if (_listViewWifi.getChildAt(idx - firstVisibleItem) != null)
+		//	_listViewWifi.getChildAt(idx - firstVisibleItem).setBackgroundColor(Color.rgb(0, 162, 232));
 	}
 
 	/**
@@ -359,12 +359,26 @@ public class ActivityWifiList extends ActivityBaseNeTV implements OnClickListene
 		}
 		else
 		{
+			/* This is wrong
 			Iterator<String> itr = _wifiHashMap.keySet().iterator();
 			int tempIndex = 0;
 			while (itr.hasNext())
 			{
 				ScanResult wifi = _wifiHashMap.get(itr.next());
-				if ( !SSID.contains(wifi.SSID) ) {
+				if ( !SSID.toLowerCase().contains(wifi.SSID.toLowerCase()) ) {
+					tempIndex++;
+					continue;
+				}
+				idx = tempIndex;
+				break;
+			}
+			*/
+			
+			int tempIndex = 0;
+			for (int i=0; i < _wifiListItems.size(); i++)
+			{
+				CustomListItem item = _wifiListItems.get(i);
+				if ( !SSID.equals(item.getTitle()) ) {
 					tempIndex++;
 					continue;
 				}
@@ -402,8 +416,7 @@ public class ActivityWifiList extends ActivityBaseNeTV implements OnClickListene
 		if (position < 0) {
 			_selectedSSID = "";
 			for (int i = 0; i < _listViewWifi.getChildCount(); i++)
-				_listViewWifi.getChildAt(i)
-						.setBackgroundColor(Color.TRANSPARENT);
+				_listViewWifi.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
 			updateNextStepUI();
 			return;
 		}
@@ -534,7 +547,7 @@ public class ActivityWifiList extends ActivityBaseNeTV implements OnClickListene
 
 			//Remove prefix & suffix quotes (")
 			String configured_ssid = configuredWifi.SSID;
-			configured_ssid = configured_ssid.substring(1, configured_ssid.length()-2);
+			configured_ssid = configured_ssid.substring(1, configured_ssid.length()-1);
 			
 			// Don't auto-select weaker networks
 			if (!_selectedSSID.equals("")) {
@@ -561,7 +574,7 @@ public class ActivityWifiList extends ActivityBaseNeTV implements OnClickListene
 
 		//UI
 		((ImageView) findViewById(R.id.btn_next)).setVisibility(enableNext ? View.VISIBLE : View.GONE);
-		if (enableNext)		setStatusMessage("Selected " + _selectedSSID.equals(""));
+		if (enableNext)		setStatusMessage("Selected: " + _selectedSSID);
 		else				setStatusMessage(this.getString(R.string.select_home_wifi));
 		
 		return enableNext;
