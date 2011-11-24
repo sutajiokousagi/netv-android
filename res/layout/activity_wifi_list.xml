@@ -24,9 +24,11 @@
 			android:layout_width="fill_parent"
 			android:layout_below="@+id/navbar"
 			android:layout_above="@+id/bottombar"
-			android:layout_marginTop="-4sp"
+			android:layout_marginTop="-5sp"
 			android:layout_marginBottom="-1sp"
 			android:layout_centerHorizontal="true"
+			android:background="@android:color/transparent"
+			android:cacheColorHint="#00000000"
 			android:divider="#333333"
 	        android:dividerHeight="1dip"
         	/>
