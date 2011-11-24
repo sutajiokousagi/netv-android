@@ -17,6 +17,7 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -25,16 +26,17 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
-public class ActivityWifiList extends ActivityBaseNeTV implements
-		OnClickListener, OnItemClickListener, OnScrollListener {
+public class ActivityWifiList extends ActivityBaseNeTV implements OnClickListener, OnItemClickListener, OnScrollListener
+{
 	// Wifi
-	WifiInfo myWifiInfo;
-	ScanResult wifiNeTV;
-	List<ScanResult> wifiList;
-	HashMap<String, ScanResult> wifiHashMap;
+	WifiInfo 			_myWifiInfo;
+	ScanResult 			_wifiNeTV;
+	List<ScanResult> 	_wifiList;
+	HashMap<String, ScanResult> _wifiHashMap;
 
 	// Flags & data
 	int _retryCounter;
@@ -50,10 +52,11 @@ public class ActivityWifiList extends ActivityBaseNeTV implements
 	boolean _sentWifiScan;
 
 	// UI
-	ListView listViewWifi;
-	CustomListAdapter listViewAdapter;
-	ArrayList<CustomListItem> wifiListItems;
-	AlertDialog alertDialog;
+	ListView 					_listViewWifi;
+	CustomListAdapter 			_listViewAdapter;
+	ArrayList<CustomListItem> 	_wifiListItems;
+	AlertDialog 				_alertDialog;
+	TextView 					_statusTextView;
 
 	// Private helper classes (this is awesome)
 	// ----------------------------------------------------------------------------
@@ -99,19 +102,21 @@ public class ActivityWifiList extends ActivityBaseNeTV implements
 								startWifiScan();
 							}
 						});
-		alertDialog = builder.create();
+		_alertDialog = builder.create();
 
 		// Setup ListView UI
-		wifiListItems = new ArrayList<CustomListItem>();
-		listViewWifi = ((ListView) findViewById(R.id.list_wifi));
-		listViewWifi.setOnItemClickListener(this);
-		listViewAdapter = new CustomListAdapter(this, wifiListItems);
-		listViewWifi.setAdapter(listViewAdapter);
-		listViewWifi.setOnScrollListener(this);
+		_wifiListItems = new ArrayList<CustomListItem>();
+		_listViewWifi = ((ListView) findViewById(R.id.list_wifi));
+		_listViewWifi.setOnItemClickListener(this);
+		_listViewAdapter = new CustomListAdapter(this, _wifiListItems);
+		_listViewWifi.setAdapter(_listViewAdapter);
+		_listViewWifi.setOnScrollListener(this);
 
-		// Setup UI
-		((Button) findViewById(R.id.button_refresh_wifi)).setOnClickListener(this);
-		((Button) findViewById(R.id.button_next_wifi)).setOnClickListener(this);
+		// Setup other UI
+		_statusTextView = (TextView) this.findViewById(R.id.txt_status);
+		((ImageView) this.findViewById(R.id.btn_back)).setOnClickListener(this);
+		((ImageView) this.findViewById(R.id.btn_next)).setOnClickListener(this);
+		((ImageView) this.findViewById(R.id.btn_refresh)).setOnClickListener(this);
 	}
 
 	/**
@@ -125,6 +130,7 @@ public class ActivityWifiList extends ActivityBaseNeTV implements
 	{
 		super.onResume();
 
+		hideKeyboard(null);
 		reset();
 
 		updateNextStepUI();
@@ -160,11 +166,11 @@ public class ActivityWifiList extends ActivityBaseNeTV implements
 
 		// Hide keyboard
 		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(listViewWifi.getWindowToken(), 0);
+		imm.hideSoftInputFromWindow(_listViewWifi.getWindowToken(), 0);
 
 		// Initialize data & flags
-		wifiNeTV = null;
-		wifiList = null;
+		_wifiNeTV = null;
+		_wifiList = null;
 
 		_retryCounter = 0;
 		_selectedSSID = "";
@@ -216,8 +222,8 @@ public class ActivityWifiList extends ActivityBaseNeTV implements
 		Log.d(TAG, "Selecting Wifi network: " + item.getTitle());
 
 		// UI
-		clearHighlightNetwork();
-		v.setBackgroundColor(Color.rgb(0, 162, 232));
+		clearAllHighlight();
+		//v.setBackgroundColor(Color.rgb(0, 162, 232));
 
 		_selectedSSID = item.getTitle();
 		_myApp.sendAndroidJSWifiSelect(_selectedSSID);
@@ -231,11 +237,15 @@ public class ActivityWifiList extends ActivityBaseNeTV implements
 	 */
 	public void onClick(View v)
 	{
-		if (v.getId() == R.id.button_refresh_wifi)
+		if (v.getId() == R.id.btn_back)
+		{
+			finish();
+		}
+		else if (v.getId() == R.id.btn_refresh)
 		{
 			onRefreshButtonClick(v);
 		}
-		else if (v.getId() == R.id.button_next_wifi)
+		else if (v.getId() == R.id.btn_next)
 		{
 			_handler.removeCallbacks(initializeSequenceRunnable);
 			// Start new Activity to ask for network password phrase or Chumby
@@ -270,26 +280,26 @@ public class ActivityWifiList extends ActivityBaseNeTV implements
 	 */
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
 	{
-		if (wifiHashMap == null)
+		if (_wifiHashMap == null)
 			return;
 
 		// Clear highlight
-		for (int i = 0; i < listViewWifi.getChildCount(); i++)
-			if (listViewWifi.getChildAt(i) != null)
-				listViewWifi.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
+		for (int i = 0; i < _listViewWifi.getChildCount(); i++)
+			if (_listViewWifi.getChildAt(i) != null)
+				_listViewWifi.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
 
 		int idx = -1;
 		if (_selectedSSID.equals(this.getString(R.string.wifi_network_other)))
 		{
-			idx = listViewWifi.getChildCount() - 1;
+			idx = _listViewWifi.getChildCount() - 1;
 		}
 		else
 		{
-			Iterator<String> itr = wifiHashMap.keySet().iterator();
+			Iterator<String> itr = _wifiHashMap.keySet().iterator();
 			int tempIndex = 0;
 			while (itr.hasNext())
 			{
-				ScanResult wifi = wifiHashMap.get(itr.next());
+				ScanResult wifi = _wifiHashMap.get(itr.next());
 				if ( !_selectedSSID.contains(wifi.SSID) ) {
 					tempIndex++;
 					continue;
@@ -306,8 +316,8 @@ public class ActivityWifiList extends ActivityBaseNeTV implements
 			return;
 
 		// Highlight
-		if (listViewWifi.getChildAt(idx - firstVisibleItem) != null)
-			listViewWifi.getChildAt(idx - firstVisibleItem).setBackgroundColor(Color.rgb(0, 162, 232));
+		if (_listViewWifi.getChildAt(idx - firstVisibleItem) != null)
+			_listViewWifi.getChildAt(idx - firstVisibleItem).setBackgroundColor(Color.rgb(0, 162, 232));
 	}
 
 	/**
@@ -329,7 +339,7 @@ public class ActivityWifiList extends ActivityBaseNeTV implements
 	/**
 	 * @category UI Utility
 	 */
-	public void clearHighlightNetwork()
+	public void clearAllHighlight()
 	{
 		highlightNetwork(-1);
 	}
@@ -345,15 +355,15 @@ public class ActivityWifiList extends ActivityBaseNeTV implements
 
 		if (SSID.equals(this.getString(R.string.wifi_network_other)))
 		{
-			idx = listViewWifi.getChildCount() - 1;
+			idx = _listViewWifi.getChildCount() - 1;
 		}
 		else
 		{
-			Iterator<String> itr = wifiHashMap.keySet().iterator();
+			Iterator<String> itr = _wifiHashMap.keySet().iterator();
 			int tempIndex = 0;
 			while (itr.hasNext())
 			{
-				ScanResult wifi = wifiHashMap.get(itr.next());
+				ScanResult wifi = _wifiHashMap.get(itr.next());
 				if ( !SSID.contains(wifi.SSID) ) {
 					tempIndex++;
 					continue;
@@ -371,14 +381,14 @@ public class ActivityWifiList extends ActivityBaseNeTV implements
 
 		// Found in list
 		_selectedSSID = SSID;
-		listViewWifi.smoothScrollToPosition(idx);
+		_listViewWifi.smoothScrollToPosition(idx);
 		_myApp.sendAndroidJSWifiSelect(_selectedSSID);
 
 		// Highlight
-		for (int i = 0; i < listViewWifi.getChildCount(); i++)
-			listViewWifi.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
-		if (listViewWifi.getChildAt(idx) != null)
-			listViewWifi.getChildAt(idx).setBackgroundColor(Color.rgb(0, 162, 232));
+		for (int i = 0; i < _listViewWifi.getChildCount(); i++)
+			_listViewWifi.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
+		//if (_listViewWifi.getChildAt(idx) != null)
+		//	_listViewWifi.getChildAt(idx).setBackgroundColor(Color.rgb(0, 162, 232));
 
 		updateNextStepUI();
 		return true;
@@ -391,22 +401,21 @@ public class ActivityWifiList extends ActivityBaseNeTV implements
 		// Not in list
 		if (position < 0) {
 			_selectedSSID = "";
-			for (int i = 0; i < listViewWifi.getChildCount(); i++)
-				listViewWifi.getChildAt(i)
+			for (int i = 0; i < _listViewWifi.getChildCount(); i++)
+				_listViewWifi.getChildAt(i)
 						.setBackgroundColor(Color.TRANSPARENT);
 			updateNextStepUI();
 			return;
 		}
 
 		// Highlight
-		for (int i = 0; i < listViewWifi.getChildCount(); i++)
-			listViewWifi.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
-		if (listViewWifi.getChildAt(position) != null)
-			listViewWifi.getChildAt(position).setBackgroundColor(
-					Color.rgb(0, 162, 232));
+		for (int i = 0; i < _listViewWifi.getChildCount(); i++)
+			_listViewWifi.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
+		//if (_listViewWifi.getChildAt(position) != null)
+		//	_listViewWifi.getChildAt(position).setBackgroundColor(Color.rgb(0, 162, 232));
 
 		// Selecting 'Other...' item
-		if (position == listViewWifi.getChildCount() - 1) {
+		if (position == _listViewWifi.getChildCount() - 1) {
 			_selectedSSID = this.getString(R.string.wifi_network_other);
 			updateNextStepUI();
 			return;
@@ -414,9 +423,9 @@ public class ActivityWifiList extends ActivityBaseNeTV implements
 
 		// Update _selectedSSID flag
 		int idx = 0;
-		Iterator<String> itr = wifiHashMap.keySet().iterator();
+		Iterator<String> itr = _wifiHashMap.keySet().iterator();
 		while (itr.hasNext()) {
-			ScanResult wifi = wifiHashMap.get(itr.next());
+			ScanResult wifi = _wifiHashMap.get(itr.next());
 
 			if (idx != position) {
 				idx++;
@@ -433,15 +442,15 @@ public class ActivityWifiList extends ActivityBaseNeTV implements
 	 * @category UI Utility
 	 */
 	public void showWifiRetryDialog() {
-		if (alertDialog != null && !alertDialog.isShowing())
-			alertDialog.show();
+		if (_alertDialog != null && !_alertDialog.isShowing())
+			_alertDialog.show();
 	}
 
 	/**
 	 * @category UI Utility
 	 */
 	public void closeWifiRetryDialog() {
-		alertDialog.dismiss();
+		_alertDialog.dismiss();
 	}
 
 	/**
@@ -487,7 +496,9 @@ public class ActivityWifiList extends ActivityBaseNeTV implements
 
 		// Picked one WiFi network from the list
 		// If no encryption, go to account/activation page directly
-		ScanResult selectedWifi = wifiHashMap.get(_selectedSSID);
+		ScanResult selectedWifi = _wifiHashMap.get(_selectedSSID);
+		if (selectedWifi == null)
+			return;
 		if (selectedWifi.capabilities.length() < 2)
 		{
 			_selectedSSID = selectedWifi.SSID;
@@ -518,7 +529,7 @@ public class ActivityWifiList extends ActivityBaseNeTV implements
 		for (WifiConfiguration configuredWifi : configuredWifis)
 		{
 			// Previously selected network goes out of range
-			if (wifiHashMap.get(_selectedSSID) == null)
+			if (_wifiHashMap.get(_selectedSSID) == null)
 				highlightNetwork(-1);
 
 			//Remove prefix & suffix quotes (")
@@ -527,8 +538,8 @@ public class ActivityWifiList extends ActivityBaseNeTV implements
 			
 			// Don't auto-select weaker networks
 			if (!_selectedSSID.equals("")) {
-				ScanResult olderWifi = wifiHashMap.get(_selectedSSID);
-				ScanResult newerWifi = wifiHashMap.get(configured_ssid);
+				ScanResult olderWifi = _wifiHashMap.get(_selectedSSID);
+				ScanResult newerWifi = _wifiHashMap.get(configured_ssid);
 				if (olderWifi.level > newerWifi.level)
 					continue;
 			}
@@ -547,7 +558,12 @@ public class ActivityWifiList extends ActivityBaseNeTV implements
 	protected boolean updateNextStepUI()
 	{
 		boolean enableNext = !_selectedSSID.equals("") && _receivedHandshake;
-		((Button) findViewById(R.id.button_next_wifi)).setEnabled(enableNext);
+
+		//UI
+		((ImageView) findViewById(R.id.btn_next)).setVisibility(enableNext ? View.VISIBLE : View.GONE);
+		if (enableNext)		setStatusMessage("Selected " + _selectedSSID.equals(""));
+		else				setStatusMessage(this.getString(R.string.select_home_wifi));
+		
 		return enableNext;
 	}
 
@@ -564,6 +580,24 @@ public class ActivityWifiList extends ActivityBaseNeTV implements
 		//Log.d(TAG, this.getLocalClassName() + ": _selectedSSID " + getPreferenceString(AppNeTV.PREF_WIFI_SSID, ""));
 		//Log.d(TAG, this.getLocalClassName() + ": _wifi_capabilities " + getPreferenceString(AppNeTV.PREF_WIFI_CAPABILITIES, ""));
 	}
+	
+	/**
+	 * @category UI Utility
+	 */
+	protected void setStatusMessage(String text)
+	{
+		setStatusMessage(text, null);
+	}
+	
+	/**
+	 * @category UI Utility
+	 */
+	protected void setStatusMessage(String text, String hexcolor)
+	{
+		if (hexcolor == null)
+			hexcolor = "00b0f0";
+		_statusTextView.setText(Html.fromHtml( "<font color='#" + hexcolor + "'>" + text + "</font>") );
+	}
 
 	// Application Logic
 	// ----------------------------------------------------------------------------
@@ -576,29 +610,29 @@ public class ActivityWifiList extends ActivityBaseNeTV implements
 	public void updateWifiList()
 	{
 		Log.d(TAG, "Updating wifi list");
-		wifiList = _myApp.getScanResults();
+		_wifiList = _myApp.getScanResults();
 
 		// Eliminates duplicates SSID by taking only strongest BSSID
-		wifiHashMap = new HashMap<String, ScanResult>();
-		for (ScanResult result : wifiList) {
-			ScanResult tempWifi = wifiHashMap.get(result.SSID);			//no extra quotes
+		_wifiHashMap = new HashMap<String, ScanResult>();
+		for (ScanResult result : _wifiList) {
+			ScanResult tempWifi = _wifiHashMap.get(result.SSID);			//no extra quotes
 			if (tempWifi == null || tempWifi.level < result.level)
-				wifiHashMap.put(result.SSID, result);
+				_wifiHashMap.put(result.SSID, result);
 		}
 
 		// Pick out 'NeTV' network
-		wifiNeTV = wifiHashMap.get(this.getString(R.string.wifi_netv_ssid));
-		wifiHashMap.remove(this.getString(R.string.wifi_netv_ssid));
+		_wifiNeTV = _wifiHashMap.get(this.getString(R.string.wifi_netv_ssid));
+		_wifiHashMap.remove(this.getString(R.string.wifi_netv_ssid));
 
 		// Construct WiFi list for UI
-		listViewWifi.clearChoices();
-		wifiListItems.clear();
+		_listViewWifi.clearChoices();
+		_wifiListItems.clear();
 
 		// We have to keep the same order as current scan result
-		List<ScanResult> wifiList = _myApp.getScanResults();
-		for (ScanResult result : wifiList)
+		List<ScanResult> _wifiList = _myApp.getScanResults();
+		for (ScanResult result : _wifiList)
 		{
-			ScanResult wifi = wifiHashMap.get(result.SSID);
+			ScanResult wifi = _wifiHashMap.get(result.SSID);
 			if (wifi == null)
 				continue;
 
@@ -607,16 +641,16 @@ public class ActivityWifiList extends ActivityBaseNeTV implements
 			tempItem.setDescription(wifi.capabilities);
 			// tempItem.setLevel(wifi.level);
 			// tempItem.setEncryption(wifi.capabilities);
-			wifiListItems.add(tempItem);
+			_wifiListItems.add(tempItem);
 		}
 
 		// Lastly, add 'Other...' item
 		CustomListItem otherWifi = new CustomListItem();
 		otherWifi.setTitle(this.getString(R.string.wifi_network_other));
-		wifiListItems.add(otherWifi);
+		_wifiListItems.add(otherWifi);
 
 		// Refresh the list UI
-		listViewAdapter.notifyDataSetChanged();
+		_listViewAdapter.notifyDataSetChanged();
 
 		// Reselect previously selected item
 		if (_selectedSSID != null && _selectedSSID.length() > 0) {
@@ -629,7 +663,7 @@ public class ActivityWifiList extends ActivityBaseNeTV implements
 
 		// Send the list to NeTV's Android configuration page
 		//_myApp.sendAndroidJSWifiScan();
-		Log.d(TAG, wifiHashMap.size() + " networks found");
+		Log.d(TAG, _wifiHashMap.size() + " networks found");
 
 		// Stop listerning for wifi scanresult
 		if (_myWifiScanReceiver_registered)

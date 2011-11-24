@@ -2,14 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       	package="com.chumby.NeTV"
       	android:versionCode="1"
-      	android:installLocation="auto" android:versionName="0.6.8"
+      	android:versionName="0.7.0"
+      	android:installLocation="auto"
+      	android:debuggable="false"
       	android:theme="@android:style/Theme.NoTitleBar" >
       
     <uses-sdk android:minSdkVersion="8" />
 
     <application android:icon="@drawable/icon"
     			 android:label="@string/app_name"
-    			 android:name=".AppNeTV" >
+    			 android:name=".AppNeTV" android:debuggable="true">
         <activity android:name=".ActivitySplash"
                   android:label="@string/app_name"
                   android:clearTaskOnLaunch="false"

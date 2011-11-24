@@ -14,9 +14,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 
 public class ActivityWifiDetails extends ActivityBaseNeTV implements OnItemSelectedListener, OnClickListener, TextWatcher
@@ -26,8 +26,8 @@ public class ActivityWifiDetails extends ActivityBaseNeTV implements OnItemSelec
 	EditText 			txtPassword;
 	CheckBox 			checkbox;
 	Spinner 			spinnerEncryption;
-	Button 				btnBack;
-	Button 				btnNext;
+	ImageView			btnBack;
+	ImageView 			btnNext;
 
 	/**
 	 * Called when the activity is first created.
@@ -53,20 +53,20 @@ public class ActivityWifiDetails extends ActivityBaseNeTV implements OnItemSelec
     	txtPassword = (EditText)findViewById(R.id.txtPassword);
     	checkbox = (CheckBox)findViewById(R.id.chkShowWifiPassword);
     	checkbox.setOnClickListener(this);
-    	btnBack = (Button)findViewById(R.id.button_back_wifi);
+    	btnBack = (ImageView)findViewById(R.id.btn_back);
     	btnBack.setOnClickListener(this);
-    	btnNext = (Button)findViewById(R.id.button_next_wifi);
+    	btnNext = (ImageView)findViewById(R.id.btn_next);
     	btnNext.setOnClickListener(this);
     	
     	String previousActivity = getPreferenceString(AppNeTV.PREF_PREVIOUS_ACTIVITY, "");
     	
     	if (previousActivity.equals(ActivityWifiList.class.getName()))
     	{
-    		btnNext.setText(this.getString(R.string.button_next));
+    		//btnNext.setText(this.getString(R.string.button_next));
     	}
     	else
     	{
-    		btnNext.setText(this.getString(R.string.button_activate));
+    		//btnNext.setText(this.getString(R.string.button_activate));
     	}
 	}
     
@@ -164,21 +164,14 @@ public class ActivityWifiDetails extends ActivityBaseNeTV implements OnItemSelec
     
     //-----------
     
-    public void onClick(View arg0)
+    public void onClick(View v)
     {
-    	if (arg0.getId() == R.id.chkShowWifiPassword)
-    	{
-    		int selStart = txtPassword.getSelectionStart();
-    		int selEnd = txtPassword.getSelectionEnd();
-	    	if (checkbox.isChecked())    	txtPassword.setTransformationMethod(SingleLineTransformationMethod.getInstance());
-		    else 							txtPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
-	    	txtPassword.setSelection(selStart,selEnd);
-    	}
-    	else if (arg0.getId() == R.id.button_back_wifi)
-    	{
-    		finish();
-    	}
-    	else if (arg0.getId() == R.id.button_next_wifi)
+    	if (v.getId() == R.id.btn_back)
+		{
+    		hideKeyboard(null);
+			finish();
+		}
+    	else if (v.getId() == R.id.btn_next)
     	{   		
         	String previousActivity = getPreferenceString(AppNeTV.PREF_PREVIOUS_ACTIVITY, "");
         	if (previousActivity.equals(ActivityWifiList.class.getName()))
@@ -192,6 +185,14 @@ public class ActivityWifiDetails extends ActivityBaseNeTV implements OnItemSelec
         		//Because we were coming back from some error in ActivityActivation
         		gotoNextActivity(ActivityConfiguring.class);
         	}
+    	}
+    	else if (v.getId() == R.id.chkShowWifiPassword)
+    	{
+    		int selStart = txtPassword.getSelectionStart();
+    		int selEnd = txtPassword.getSelectionEnd();
+	    	if (checkbox.isChecked())    	txtPassword.setTransformationMethod(SingleLineTransformationMethod.getInstance());
+		    else 							txtPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+	    	txtPassword.setSelection(selStart,selEnd);
     	}
     	updateNextStepUI();
     }
@@ -262,7 +263,8 @@ public class ActivityWifiDetails extends ActivityBaseNeTV implements OnItemSelec
     	if (index != 0)
     		enableNext = enableNext && (txtPassword.getText().length() > 1);
 
-    	btnNext.setEnabled(enableNext);
+    	//btnNext.setEnabled(enableNext);
+    	btnNext.setVisibility(enableNext ? View.VISIBLE : View.GONE);
     	return enableNext;
     }
     

@@ -1,5 +1,10 @@
+0.7.0
+Publish for Market
+WifiList no longer highlight the selected SSID
+
 0.6.8
-Migrate to new graphics from iOS version
+In process of migrating to new graphics from iOS version
+Major clean up on the layout files
 
 0.6.7
 Send UDP messages immediately instead of queuing

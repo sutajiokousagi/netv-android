@@ -35,18 +35,16 @@
     		android:src="@drawable/navbar_back"
     		android:layout_alignParentLeft="true"
     		android:layout_alignParentTop="true"
-    		android:visibility="invisible"
     		/>
     		
     <ImageView
-    		android:id="@+id/loading_icon"
+    		android:id="@+id/btn_next"
     		android:layout_height="wrap_content"
     		android:layout_width="wrap_content"
     		android:scaleType="centerCrop"
-    		android:src="@drawable/loading_icon"
+    		android:src="@drawable/navbar_next"
     		android:layout_alignParentRight="true"
     		android:layout_alignParentTop="true"
-    		android:visibility="invisible"
     		/>
     		
     <!-- The rest -->
@@ -94,7 +92,7 @@
 								    android:lines="1"
 								    android:maxLines="1"
 								    android:hint="@string/enter_ssid_hint"
-								    />
+								    android:imeOptions="actionNext"/>
 			    </TableRow>
 			    <TableRow>
 			        <TextView android:layout_height="match_parent"
@@ -110,7 +108,7 @@
 		         					android:textStyle="bold" 
 								    android:lines="1"
 								    android:maxLines="1"
-								    />
+								    android:imeOptions="actionNext"/>
 			    </TableRow>
 			    
 			    <!-- WiFi security selection --> 
@@ -123,7 +121,7 @@
 			        <Spinner android:id="@+id/spinnerEncryption"
 		         					android:layout_height="44sp"
 								    android:layout_marginLeft="5dp"
-			        				/>
+			        				android:hapticFeedbackEnabled="true"/>
 			    </TableRow> 
 			    
 			    <!-- Show/hide plain text password -->
@@ -139,29 +137,6 @@
 			    
 			</TableLayout>
 			
-			
-			<!-- The bottom 2 buttons -->
-			<LinearLayout
-			    android:orientation="horizontal"
-			    android:layout_width="fill_parent"
-			    android:layout_height="wrap_content"
-			    >
-			    <Button
-					android:id="@+id/button_back_wifi"
-					android:text="@string/button_back"
-					android:layout_height="wrap_content"
-					android:layout_width="wrap_content"
-					android:layout_weight="0.5"
-					/>
-				<Button
-					android:id="@+id/button_next_wifi"
-					android:text="@string/button_next"
-					android:layout_height="wrap_content"
-					android:layout_width="wrap_content"
-					android:layout_weight="0.5"
-					/>
-			</LinearLayout>
-				
 		</LinearLayout>
 
 	</ScrollView>

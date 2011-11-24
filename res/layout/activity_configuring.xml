@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:keepScreenOn="true"
@@ -37,6 +36,7 @@
     		android:src="@drawable/navbar_back"
     		android:layout_alignParentLeft="true"
     		android:layout_alignParentTop="true"
+    		android:visibility="invisible"
     		/>
     		
     <ImageView
@@ -47,10 +47,9 @@
     		android:src="@drawable/loading_icon"
     		android:layout_alignParentRight="true"
     		android:layout_alignParentTop="true"
-    		android:visibility="invisible"
     		/>
     		
-    <!-- The rest -->
+    <!-- Instruction text & logo -->
     		
     <ImageView android:src="@drawable/chumby"
     		android:id="@+id/chumby_logo"
@@ -60,21 +59,37 @@
     		android:layout_centerHorizontal="true"
     		android:layout_centerVertical="true"
     		/>
+    
     <TextView
     		android:text="@string/please_wait_while_configuring"
     		android:layout_width="fill_parent"
     		android:layout_height="wrap_content"
-    		android:layout_below="@+id/navbar"
+    		android:layout_above="@+id/bottombar"
+    		android:layout_marginBottom="3sp"
     		android:gravity="center"
     		android:textSize="13sp"
-		    android:textColor="#CCCCCC" 
+		    android:textColor="#999999" 
     		/>
-    <TextView
-    		android:id="@+id/txtActivationStatus"
-    		android:text="A good placeholder for a nice slogan"
-    		android:layout_width="fill_parent"
+    
+    <!-- Bottom toolbar -->
+	
+	<ImageView
+	    	android:id="@+id/bottombar"
     		android:layout_height="wrap_content"
-    		android:gravity="center_horizontal"
+    		android:layout_width="fill_parent"
+    		android:scaleType="centerCrop"
+    		android:src="@drawable/bottombar"
     		android:layout_alignParentBottom="true"
     		/>
+
+	<TextView
+	    	android:id="@+id/txtActivationStatus"
+    		android:text="some status text here"
+    		android:layout_width="fill_parent"
+    		android:gravity="center"
+    		android:textSize="13sp"
+		    android:textColor="#00CCFF"
+		    android:layout_alignParentBottom="true"
+    		android:layout_height="37dp"/>
+    
 </RelativeLayout>
