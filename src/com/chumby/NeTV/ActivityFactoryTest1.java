@@ -71,6 +71,10 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV implements OnClickLis
 	boolean _passTest_GetFileContents;
 	String _opkgUpdateSource;
 	
+	boolean _performTest_ExistPSP;
+	boolean _sentFileExist;
+	boolean _passTest_ExistPSP;
+	
 	String _localMD5;
 	boolean _performedTest_Upload;
 	long _uploadTime;
@@ -292,6 +296,10 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV implements OnClickLis
     	_sentGetFileContents = false;
     	_passTest_GetFileContents = false;
     	_opkgUpdateSource = "";
+    	
+    	_performTest_ExistPSP = false;
+    	_sentFileExist = false;
+    	_passTest_ExistPSP = false;
     	
     	_performedTest_Upload = false;
     	_uploadTime = -1;
@@ -661,14 +669,20 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV implements OnClickLis
 		    	_uploadTime = System.currentTimeMillis() - _uploadTime;
 		    	_passTest_Upload = true;
 		    	
-		    	String filesize = response.split("</filesize>")[0].split("<filesize>")[1].trim();
+		    	//Some units used to crash here due to 'split' function on an null object
 		    	long remote_size = 0;
 		    	if (response.length() < 100)
 		    		Log.d(TAG, "uploadFileToNeTV: " + response);
 		    	
-		    	try {
-		    		remote_size = Long.parseLong(filesize);
-		    	} catch (NumberFormatException nfe)	{
+		    	try
+		    	{
+		    		if (response.split("<filesize>").length == 2 && response.split("</filesize>").length == 2)
+		    			remote_size = Long.parseLong( response.split("</filesize>")[0].split("<filesize>")[1].trim() );
+		    		else
+		    			remote_size = 0;
+		    	}
+		    	catch (Exception e)
+		    	{
 		    		remote_size = 0;
 		    	}
 		    	
@@ -1075,6 +1089,38 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV implements OnClickLis
 			}
 			return;
 		}
+		else if (commandName.equals(MessageReceiver.COMMAND_FileExists.toUpperCase()))
+		{
+			//String status = (String) parameters.get(MessageReceiver.COMMAND_STATUS);
+			String value = (String) parameters.get(MessageReceiver.MESSAGE_KEY_VALUE);
+			if (value == null || value.length() <= 1)
+				return;
+			if (_performTest_ExistPSP && _passTest_ExistPSP)
+				return;
+			
+			if (value.toUpperCase().contains("FALSE"))
+			{
+				
+				_passTest_ExistPSP = false;
+				addToLogUI("/psp is NOT mounted correctly", "ff0000");
+				Log.e(TAG, "/psp is NOT mounted correctly");
+				_myApp.sendAndroidJSTestConsole("/psp test failed", "ff0000");
+				_myApp.sendAndroidJSTestConsole("An unrecoverable firmware error was detected.", "ff0000");
+				_myApp.sendAndroidJSTestConsole("Please re-burn the SD card.", "00b0f0");
+				_myApp.sendAndroidJSTestConsole("<br>", "00b0f0");
+				_myApp.sendAndroidJSTestConsole("Testing stopped", "ffffff");
+				_retryCounter = 99;
+			}
+			else
+			{
+				_passTest_ExistPSP = true;
+				addToLogUI("/psp is mounted correctly", "00ff00");
+				Log.i(TAG, "/psp is mounted correctly");
+				_myApp.sendAndroidJSTestConsole("/psp test passed", "00ff00");			
+			}
+			_performTest_ExistPSP = true;
+			return;
+		}
 		
 		//----------------------
 		
@@ -1293,7 +1339,7 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV implements OnClickLis
 			_handler.postDelayed(testSequenceRunnable, 1000);
 			return;
 		}
-				
+
 		//Test 2 - Check debug or release 
 		if (!_performTest_GetFileContents)
 		{
@@ -1323,6 +1369,35 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV implements OnClickLis
 			return;
 		}
 		
+		//Test 3 - Check /psp is mounted correctly
+		if (!_performTest_ExistPSP)
+		{
+			if (!_sentFileExist)
+			{
+				addToLogUI("Checking /psp mount");
+				setStatusMessage("Checking /psp mount...");
+				_sentFileExist = true;
+				_passTest_ExistPSP = false;
+				_retryCounter = 0;
+				_myApp.sendRequestFileExists("/media/storage/var/psp");
+				_handler.postDelayed(testSequenceRunnable, 1500);
+				return;
+			}
+			_retryCounter++;
+			if (_retryCounter <= 3)
+			{
+				_myApp.sendRequestFileExists("/media/storage/var/psp");
+				_handler.postDelayed(testSequenceRunnable, 1000);
+				return;
+			}
+		}
+		else if (!_passTest_ExistPSP)
+		{
+			//Stop testing
+			return;
+		}
+		
+		
 		//Wait til we finish generating random data
 		if (!_generatedRandomData)
 		{
@@ -1340,7 +1415,7 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV implements OnClickLis
 			return;
 		}
 		
-		//Test 3 - Upload test 
+		//Test 4 - Upload test 
 		if (!_performedTest_Upload)
 		{
 			if (_uploadTime < 0)
@@ -1383,7 +1458,7 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV implements OnClickLis
 			return;
 		}
 		
-		//Test 4 - Verify uploaded file
+		//Test 5 - Verify uploaded file
 		if (!_performedTest_MD5)
 		{
 			if (!_sentMD5)
@@ -1414,7 +1489,7 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV implements OnClickLis
 			return;
 		}
 		
-		//Test 5 - Download test 
+		//Test 6 - Download test 
 		if (!_performedTest_Download)
 		{
 			if (_downloadTime < 0)
@@ -1446,7 +1521,7 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV implements OnClickLis
 			return;
 		}
 		
-		//Test 6 - Clean up remote file
+		//Test 7 - Clean up remote file
 		if (!_cleanUpRandomDataTest)
 		{
 			addToLogUI("Clean up random data file");
@@ -1590,6 +1665,9 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV implements OnClickLis
     	//Time test
     	stringBuilder.append("\t<passTime>" + _passTest_Time + "</passTime>\r\n");
     	stringBuilder.append("\t<netvTime>" + _receivedTimeString + "</netvTime>\r\n");
+    	
+    	//System critical
+    	stringBuilder.append("\t<pspExists>" + _passTest_ExistPSP + "</pspExists>\r\n");
     	
     	//Release/Debug test
     	stringBuilder.append("\t<isRelease>" + _passTest_GetFileContents + "</isRelease>\r\n");

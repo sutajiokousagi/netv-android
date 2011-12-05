@@ -42,6 +42,7 @@ public class MessageReceiver extends BroadcastReceiver
 	public static final String COMMAND_Android = "Android";
 	public static final String COMMAND_GetFileContents = "GetFileContents";
 	public static final String COMMAND_UnlinkFile = "UnlinkFile";
+	public static final String COMMAND_FileExists = "FileExists";
 	public static final String COMMAND_DownloadFile = "DownloadFile";
 	public static final String COMMAND_UploadFile = "UploadFile";
 	public static final String COMMAND_MD5File = "MD5File";

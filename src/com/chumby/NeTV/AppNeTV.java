@@ -1343,6 +1343,24 @@ public class AppNeTV extends Application implements MessageReceiverInterface
 	}
 	
 	/**
+     * Send a request to NeTV to check if a file exists
+     * 
+     * @category DataComm Utility
+     */
+	public String sendRequestFileExists(String fullpath)
+	{
+		HashMap<String,String> dataHashMap = new HashMap<String,String>();
+		dataHashMap.put("value", fullpath);
+		
+		//IP address for unicast transmission
+    	String _ipaddress = getPreferenceString(AppNeTV.PREF_CHUMBY_IP_ADDRESS, "");
+    	if (_ipaddress.length() > 0)
+    		dataHashMap.put(MessageReceiver.MESSAGE_KEY_ADDRESS, _ipaddress);
+    	
+		return sendSocketMessage(MessageReceiver.COMMAND_FileExists, dataHashMap);
+	}
+	
+	/**
      * Send a SetIFrame command (Flick feature)
      * 
      * @category DataComm Utility

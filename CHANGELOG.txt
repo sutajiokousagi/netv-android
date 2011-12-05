@@ -1,3 +1,7 @@
+0.7.1
+Added factory test to check /media/storage/var/psp exists.
+Unfinished burning during the first boot will cause this.
+
 0.7.0
 Publish for Market
 WifiList no longer highlight the selected SSID
