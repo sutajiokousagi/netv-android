@@ -1,4 +1,4 @@
-package com.chumby.NeTV;
+package com.bunniestudios.NeTV;
 
 /*
  * This class mirrors AppNeTV in terms of binding to service and use it 

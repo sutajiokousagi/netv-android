@@ -1,4 +1,4 @@
-package com.chumby.NeTV;
+package com.bunniestudios.NeTV;
 
 import java.io.IOException;
 import java.io.StringReader;

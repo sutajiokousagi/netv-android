@@ -1,4 +1,4 @@
-package com.chumby.NeTV;
+package com.bunniestudios.NeTV;
 
 import android.content.Context;
 import android.graphics.Bitmap;

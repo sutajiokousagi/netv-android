@@ -1,4 +1,4 @@
-package com.chumby.NeTV;
+package com.bunniestudios.NeTV;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -1103,8 +1103,13 @@ public class ActivityFactoryTest1 extends ActivityBaseNeTV implements OnClickLis
 				
 				_passTest_ExistPSP = false;
 				addToLogUI("/psp is NOT mounted correctly", "ff0000");
+				addToLogUI("An unrecoverable firmware error was detected.", "ff0000");
+				addToLogUI("Please re-burn the SD card.", "00b0f0");
+				addToLogUI("Testing stopped", "ffffff");
 				Log.e(TAG, "/psp is NOT mounted correctly");
+				Log.e(TAG, "Testing stopped");
 				_myApp.sendAndroidJSTestConsole("/psp test failed", "ff0000");
+				_myApp.sendAndroidJSTestConsole("An unrecoverable firmware error was detected.", "ff0000");
 				_myApp.sendAndroidJSTestConsole("An unrecoverable firmware error was detected.", "ff0000");
 				_myApp.sendAndroidJSTestConsole("Please re-burn the SD card.", "00b0f0");
 				_myApp.sendAndroidJSTestConsole("<br>", "00b0f0");

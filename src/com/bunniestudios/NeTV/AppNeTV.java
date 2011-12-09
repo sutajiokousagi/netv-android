@@ -1,4 +1,4 @@
-package com.chumby.NeTV;
+package com.bunniestudios.NeTV;
 
 import java.lang.reflect.Method;
 import java.math.BigInteger;
@@ -51,7 +51,7 @@ public class AppNeTV extends Application implements MessageReceiverInterface
 	private static final boolean ENABLE_RECEIVE = true;
 	
 	//Custom event
-	public static final String RECEIVE_SOCKET_MESSAGE_EVENT = "com.chumby.NeTV.socket_event";
+	public static final String RECEIVE_SOCKET_MESSAGE_EVENT = "com.bunniestudios.NeTV.socket_event";
 	
 	//URLs
 	public static final String NETV_HOME_URL = "http://localhost";
@@ -482,7 +482,7 @@ public class AppNeTV extends Application implements MessageReceiverInterface
 		try
 		{
 		    PackageManager manager = this.getPackageManager();
-		    PackageInfo info = manager.getPackageInfo("com.chumby.NeTV", 0);
+		    PackageInfo info = manager.getPackageInfo("com.bunniestudios.NeTV", 0);
 		    return info.versionName;
 		}
 		catch(NameNotFoundException nnf)

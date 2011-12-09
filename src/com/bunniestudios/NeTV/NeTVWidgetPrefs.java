@@ -1,5 +1,5 @@
 
-package com.chumby.NeTV;
+package com.bunniestudios.NeTV;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Context;

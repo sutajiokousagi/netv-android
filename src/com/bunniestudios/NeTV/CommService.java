@@ -1,4 +1,4 @@
-package com.chumby.NeTV;
+package com.bunniestudios.NeTV;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -35,7 +35,7 @@ public class CommService extends Service
 	
 	public static final int DEFAULT_PORT = 8082;
 	public static final String MULTICAST_GROUP = "225.0.0.37";
-	public static final String NEW_MESSAGE = "com.chumby.NeTV.new_message";
+	public static final String NEW_MESSAGE = "com.bunniestudios.NeTV.new_message";
 		
 	private static final int BUFFER_SIZE = 2048;
 	private static final boolean USE_MULTICAST = true;		//needs CHANGE_WIFI_MULTICAST_STATE permission

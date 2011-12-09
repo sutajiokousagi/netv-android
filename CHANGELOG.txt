@@ -1,3 +1,9 @@
+0.7.2
+Renamed main package to com.bunniestudios.NeTV
+Change app icon, replace Chumby logo with NeTV line-art
+'widget' button is changed to 'show/hide'
+Removed unused ActivityFactory class 
+
 0.7.1
 Added factory test to check /media/storage/var/psp exists.
 Unfinished burning during the first boot will cause this.

@@ -52,18 +52,18 @@
     <!-- Logo & version number -->
     			
     <ImageView
-    		android:id="@+id/chumby_logo"
+    		android:id="@+id/netv_logo"
     		android:layout_height="wrap_content"
     		android:layout_width="wrap_content"
     		android:scaleType="centerInside"
-    		android:src="@drawable/chumby"
+    		android:src="@drawable/lineart"
     		android:layout_centerInParent="true"/>
     <TextView
     		android:text="0.0.0"
     		android:id="@+id/textViewVersion"
     		android:layout_width="fill_parent"
     		android:layout_height="wrap_content"
-    		android:layout_below="@+id/chumby_logo"
+    		android:layout_below="@+id/netv_logo"
     		android:gravity="center"
     		android:textSize="14sp"
 		    android:textColor="#CCCCCC" 

@@ -1,4 +1,4 @@
-package com.chumby.NeTV;
+package com.bunniestudios.NeTV;
 
 import android.app.Activity;
 import android.app.AlertDialog;

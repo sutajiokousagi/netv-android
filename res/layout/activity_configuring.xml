@@ -51,8 +51,8 @@
     		
     <!-- Instruction text & logo -->
     		
-    <ImageView android:src="@drawable/chumby"
-    		android:id="@+id/chumby_logo"
+    <ImageView android:src="@drawable/lineart"
+    		android:id="@+id/netv_logo"
     		android:layout_height="wrap_content"
     		android:layout_width="wrap_content"
     		android:scaleType="centerInside"

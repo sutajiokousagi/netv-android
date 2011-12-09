@@ -1,4 +1,4 @@
-package com.chumby.NeTV;
+package com.bunniestudios.NeTV;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -100,7 +100,7 @@ public class ActivitySplash extends ActivityBaseNeTV implements OnItemClickListe
     	animation = new AlphaAnimation(0, 1);
     	animation.setDuration(500);
     	set.addAnimation(animation);
-    	ImageView logo = (ImageView)findViewById(R.id.chumby_logo);
+    	ImageView logo = (ImageView)findViewById(R.id.netv_logo);
         logo.startAnimation(set);
 
         //Fade in the version number
