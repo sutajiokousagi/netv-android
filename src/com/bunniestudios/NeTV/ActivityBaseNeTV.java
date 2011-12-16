@@ -27,7 +27,7 @@ public abstract class ActivityBaseNeTV extends Activity implements CustomEventRe
 	protected boolean ENABLE_SOUND_FX = false;				//universal
 	protected boolean ENABLE_TEXT_INPUT = false;			//ActivityRemoteMain
 	protected boolean ENABLE_AUTO_SELECT_AP = false;		//ActivitySplash
-	protected boolean ALLOW_UNACTIVATED_REMOTE = false;		//ActivitySplash
+	protected boolean SHOW_UNACTIVATION_DEFAULT = false;	//ActivitySplash
 	protected int NETWORK_CONFIG_WAIT_SECONDS = 60;			//ActivityActivation
 		
 	//Flags

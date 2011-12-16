@@ -60,7 +60,8 @@ public class ActivityRemoteMain extends ActivityBaseNeTV implements OnClickListe
 	boolean _pass_Upload;
 	boolean _shownPhoto;
 	
-	private static final int EDIT_ID = Menu.FIRST + 2;
+	private static final int ACT_MENU_ID = Menu.FIRST + 1;
+	private static final int PREF_MENU_ID = Menu.FIRST + 2;
 	
 	protected static final String IMAGE_HTML = "<html>" +
 				"<script type='text/javascript'>function load() { center_img.height = window.innerHeight; }</script>" +
@@ -80,7 +81,7 @@ public class ActivityRemoteMain extends ActivityBaseNeTV implements OnClickListe
 	{
 	    @Override
 	    public void onSuccess(String response)
-	    {		    	
+	    {
 	    	Log.d(TAG, "MultiTabHTTP: " + response);
 	    	String status = response.split("</status>")[0].split("<status>")[1].trim();
 	    	if (!status.equals("1"))
@@ -301,7 +302,15 @@ public class ActivityRemoteMain extends ActivityBaseNeTV implements OnClickListe
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-		menu.add(Menu.NONE, EDIT_ID, Menu.NONE, this.getString(R.string.button_preferences))
+		String activated = getPreferenceString(AppNeTV.PREF_CHUMBY_ACTIVATED, "false");		//why is this always 'true'?
+		if (!activated.equalsIgnoreCase("true"))
+		{
+			menu.add(Menu.NONE, ACT_MENU_ID, Menu.NONE, this.getString(R.string.button_activate))
+				.setIcon(android.R.drawable.ic_menu_manage)
+				.setAlphabeticShortcut('a');
+		}
+		
+		menu.add(Menu.NONE, PREF_MENU_ID, Menu.NONE, this.getString(R.string.button_preferences))
 				.setIcon(android.R.drawable.ic_menu_preferences)
 				.setAlphabeticShortcut('e');
 
@@ -313,7 +322,11 @@ public class ActivityRemoteMain extends ActivityBaseNeTV implements OnClickListe
 	{
 		switch (item.getItemId())
 		{
-			case EDIT_ID:
+			case ACT_MENU_ID:
+				startActivity(new Intent(this, ActivityAccount.class));
+				return(true);
+			
+			case PREF_MENU_ID:
 				startActivity(new Intent(this, NeTVWidgetPrefs.class));
 				return(true);
 		}

@@ -486,16 +486,7 @@ public class ActivityConfiguring extends ActivityBaseNeTV
 	private Runnable configuringDoneRunnable = new Runnable()
 	{
 		public void run()
-		{
-			//Allow unactivated device, we don't need to check the 'activated' flag
-			if (ALLOW_UNACTIVATED_REMOTE)
-			{
-				Log.i(TAG, "Going to ActivityRemoteMain...");
-				gotoNextActivity(ActivityRemoteMain.class);
-				overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
-				return;
-			}
-			
+		{		
 			String activated = getPreferenceString(AppNeTV.PREF_CHUMBY_ACTIVATED, "false");
 			if (activated.equals("true"))
 			{

@@ -1,3 +1,6 @@
+0.7.3
+Do not show Activation by default, move it to 'Menu' key menu
+
 0.7.2
 Renamed main package to com.bunniestudios.NeTV
 Change app icon, replace Chumby logo with NeTV line-art

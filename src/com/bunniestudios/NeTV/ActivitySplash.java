@@ -247,12 +247,6 @@ public class ActivitySplash extends ActivityBaseNeTV implements OnItemClickListe
 	protected void updateHashVariables()
 	{
 		// Do nothing
-		
-		//Assume device is activated (so that it doesn't show ActivityAccount)
-		setPreferenceString(AppNeTV.PREF_CHUMBY_ACTIVATED, "true");
-    	setPreferenceString(AppNeTV.PREF_CHUMBY_USERNAME, "chumby");
-    	setPreferenceString(AppNeTV.PREF_CHUMBY_PASSWORD, "123456");
-    	setPreferenceString(AppNeTV.PREF_CHUMBY_DEVICE_NAME, "NeTV Demo");
 	}
 		    
     /**
@@ -485,7 +479,7 @@ public class ActivitySplash extends ActivityBaseNeTV implements OnItemClickListe
 			return;
     	}
     	
-		//Selected an network-unconfigured device
+		//Selected a network-unconfigured device
 		String unconfiguredAddress = this.getString(R.string.select_to_configure);
 		if (unconfiguredAddress.equals(tag))
 		{
@@ -503,21 +497,20 @@ public class ActivitySplash extends ActivityBaseNeTV implements OnItemClickListe
 		
 		//Selected an unactivated (but network-configured) device
 		//This flag select whether we want to allow demo/testing with unactivated device
-		if (!ALLOW_UNACTIVATED_REMOTE && !tag.equals(AppNeTV.DEFAULT_IP_ADDRESS))
+		if (!tag.equals(AppNeTV.DEFAULT_IP_ADDRESS))
 		{
     		Bundle deviceParams = _deviceList.get(tag);
-    		if (deviceParams.containsKey(AppNeTV.PREF_CHUMBY_DEVICE_NAME))
-    		{
-    			String unactivatedName = this.getString(R.string.chumby_device_name_unactivated);
-    			if (unactivatedName.equals(deviceParams.get(AppNeTV.PREF_CHUMBY_DEVICE_NAME).toString()))
-    			{
-    				gotoNextActivity(ActivityAccount.class);
-        			overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
-        			return;
-    			}
+    		String unactivatedName = this.getString(R.string.chumby_device_name_unactivated);   		
+    		boolean isActivated = deviceParams.containsKey(AppNeTV.PREF_CHUMBY_DEVICE_NAME) && !unactivatedName.equals(deviceParams.get(AppNeTV.PREF_CHUMBY_DEVICE_NAME).toString());
+
+			if (SHOW_UNACTIVATION_DEFAULT && !isActivated)
+			{
+				gotoNextActivity(ActivityAccount.class);
+    			overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+    			return;
     		}
 		}
-					
+		
 		//Normally show the remote control
 		gotoNextActivity(ActivityRemoteMain.class);
 		overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
@@ -641,6 +634,7 @@ public class ActivitySplash extends ActivityBaseNeTV implements OnItemClickListe
 	
 	/**
      * @category Application Logic
+     * Save selected device parameters into phone's preference memory
      */
 	void saveDeviceParameters(String ipaddress)
 	{
